@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f7f2">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Héritage — l’arbre de famille</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="family.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body data-view="tree" data-panel="open">
+  <section id="family-gate" class="family-gate" hidden aria-labelledby="family-title">
+    <div class="family-art" aria-hidden="true"><span class="family-wordmark">Héritage<span>.</span></span><div class="family-orbit orbit-one"></div><div class="family-orbit orbit-two"></div><div class="family-seed">h.</div><p>Des racines.<br>Des liens.<br>Notre histoire.</p></div>
+    <div class="family-welcome"><p class="eyebrow">L’ATLAS DE NOTRE FAMILLE</p><h1 id="family-title">Une histoire<br>à partager<span>.</span></h1><p class="family-intro">Retrouvez les visages, les liens et les souvenirs qui traversent les générations.</p>
+      <form id="family-form"><label for="family-code">Votre code familial</label><div class="family-code-field"><input id="family-code" type="password" required maxlength="200" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="family-message"><button id="show-family-code" type="button" aria-pressed="false">Afficher</button></div><button class="primary-button" id="family-submit" type="submit">Entrer dans notre histoire <span aria-hidden="true">↗</span></button><p id="family-message" role="status" aria-live="polite"></p></form>
+      <p class="family-footnote">Sans compte, sans e-mail. Demandez le code à la personne qui vous a transmis l’adresse.<br>L’accès est conservé sept jours sur cet appareil.</p>
+    </div>
+  </section>
+  <a class="skip-link" href="#tree-viewport">Aller à l’arbre</a>
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Héritage, revenir à l’accueil">Héritage<span>.</span></a>
+    <div class="collection-heading"><h1>Notre arbre familial</h1><span>Votre histoire, de génération en génération</span></div>
+    <nav class="view-nav" aria-label="Mode de consultation">
+      <button type="button" data-view="tree" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="17" width="6" height="5" rx="1"/><rect x="16" y="17" width="6" height="5" rx="1"/><path d="M12 7v5M5 17v-5h14v5"/></svg><span>Vue famille</span></button>
+      <button type="button" data-view="portrait" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="8" r="2.5"/><path d="M8 15c0-4 8-4 8 0M8 18h8"/></svg><span>Portrait</span></button>
+    </nav>
+    <button type="button" id="open-notebook" class="notebook-trigger" disabled aria-label="Ouvrir mon carnet, mes favoris et mes sauvegardes">☆ <span>Carnet</span></button>
+    
+    <button id="lock-family" type="button" class="outline-button" hidden title="Efface l’accès et les copies familiales de ce navigateur. Conserve vos notes personnelles.">Fermer l’accès</button>
+  </header>
+  <main id="main">
+    <div id="loading" class="loading-message" role="status">Ouverture de votre arbre…</div>
+    <div id="error" class="error-message" role="alert" hidden><h2>L’arbre n’a pas pu être ouvert.</h2><p>Vérifiez la connexion et la disponibilité des données, puis réessayez.</p><button class="primary-button" type="button" id="retry">Réessayer</button></div>
+    <div class="workspace" id="workspace" hidden>
+      <aside class="portrait-panel" id="portrait-panel" aria-label="Fiche de la personne sélectionnée"></aside>
+      <section class="tree-panel" aria-label="Exploration de la famille">
+        <div class="tree-toolbar">
+          <button type="button" class="icon-button panel-toggle" id="toggle-panel" aria-label="Masquer la fiche" aria-expanded="true" aria-controls="portrait-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 4v16"/></svg></button>
+          <div class="tree-status"><strong id="visible-count"></strong><span id="branch-title">Notre famille</span></div>
+          <div class="segmented" aria-label="Personnes affichées"><button type="button" data-scope="all" aria-pressed="true">Famille</button><button type="button" data-scope="parents" aria-pressed="false">Ascendance</button></div>
+          <button class="search-trigger" type="button" id="open-search" aria-label="Rechercher une personne"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Rechercher une personne…</span><kbd aria-hidden="true">/</kbd></button>
+        </div>
+        <div id="family-choices" class="family-choices" hidden></div>
+        <div class="canvas-area">
+          <div class="tree-viewport" id="tree-viewport" tabindex="0" role="group" aria-label="Arbre familial. Faites glisser ou défiler pour vous déplacer."><div class="tree-sizer" id="tree-sizer"><div class="tree-stage" id="tree-stage"></div></div></div>
+          <div class="canvas-history"><button type="button" class="canvas-button" id="go-back" aria-label="Revenir à la famille précédente" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h12a6 6 0 0 1 6 6"/></svg></button><button type="button" class="canvas-button" id="go-home" aria-label="Revenir à la famille d’accueil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></button></div>
+          <div class="canvas-controls" aria-label="Cadrage et zoom de l’arbre"><button type="button" class="canvas-button" id="focus-person" aria-label="Recentrer sur la personne sélectionnée" title="Recentrer sur la sélection"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button><button type="button" class="canvas-button" id="fit-tree" aria-label="Voir tout l’arbre affiché" title="Voir tout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button><div class="zoom-group"><button type="button" class="canvas-button" id="zoom-in" aria-label="Agrandir l’arbre">+</button><button type="button" id="zoom-reset" class="zoom-value" aria-label="Revenir au zoom de 100 %">100 %</button><button type="button" class="canvas-button" id="zoom-out" aria-label="Réduire l’arbre">−</button></div></div>
+          <p class="sample-hint" id="sample-hint">Consultation de votre arbre</p>
+          <div class="mobile-selection" id="mobile-selection"><button type="button" id="open-mobile-profile" aria-label="Ouvrir la fiche sélectionnée"><span class="mini-avatar" id="mobile-avatar" aria-hidden="true"></span><span><small>Personne sélectionnée</small><strong id="mobile-name"></strong></span><span class="chevron" aria-hidden="true">⌃</span></button></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+  <dialog id="search-dialog" aria-labelledby="search-title">
+    <div class="search-dialog-heading"><div><p class="eyebrow">Dans votre famille</p><h2 id="search-title">Rechercher une personne</h2></div><button type="button" class="icon-button" id="close-search" aria-label="Fermer la recherche">×</button></div>
+    <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="search-input" placeholder="Un nom, un lieu, une année…" autocomplete="off" aria-label="Rechercher par prénom, nom, lieu ou année"></label>
+    <p id="search-count" class="search-count" role="status"></p><div class="search-results" id="search-results"></div>
+    <button type="button" id="search-more" class="outline-button" hidden>Afficher les résultats suivants</button><p class="search-note" id="search-note">Recherche dans tout votre arbre. Ajoutez un lieu ou une année pour distinguer les homonymes.</p>
+  </dialog>
+  <dialog id="notebook-dialog" aria-labelledby="notebook-title">
+    <div class="search-dialog-heading"><div><p class="eyebrow">Votre espace personnel</p><h2 id="notebook-title">Mon carnet</h2></div><button type="button" class="icon-button" id="close-notebook" aria-label="Fermer le carnet">×</button></div>
+    <p class="notebook-intro">Vos repères, vos questions, vos découvertes. Ce carnet est conservé dans ce navigateur, sur cet appareil.</p>
+    <div class="notebook-toolbar"><p id="notebook-count" role="status"></p><label>Afficher <select id="notebook-filter"><option value="all">Tout le carnet</option><option value="favorites">Les favoris</option><option value="notes">Les notes</option></select></label></div>
+    <p id="notebook-unmatched" class="personal-warning" hidden></p>
+    <div id="notebook-list"></div>
+    <section class="notebook-section"><h3>Sauvegarder mon carnet</h3><p>Exportez vos notes et favoris dans un fichier à conserver. La restauration complète les données sans écraser vos notes actuelles. L’arbre et les photos ne sont pas inclus.</p><div class="notebook-actions"><button type="button" id="export-notebook" class="primary-button">Exporter le carnet</button><button type="button" id="import-notebook" class="outline-button">Choisir une sauvegarde</button></div><input type="file" id="notebook-file" accept=".json,application/json" hidden><p id="personal-status" role="status" aria-live="polite"></p><button type="button" id="confirm-restore" class="primary-button" hidden>Restaurer le carnet</button></section>
+    <section class="notebook-section"><h3>Emporter mon arbre</h3><p>Préparez une copie pour rouvrir cet arbre sans connexion, dans ce même navigateur. Les photos consultées seront conservées progressivement ; vous pouvez aussi les prendre toutes (environ 315 Mo).</p><p id="offline-status" role="status" aria-live="polite">Vérification de la disponibilité…</p><div class="notebook-actions"><button type="button" id="prepare-offline" class="primary-button">Préparer le hors connexion</button><button type="button" id="cache-photos" class="outline-button" disabled>Conserver toutes les photos</button><button type="button" id="stop-photos" class="outline-button" hidden>Arrêter</button><button type="button" id="update-app" class="outline-button" hidden>Activer la mise à jour</button></div><p class="notebook-footnote">Une copie dans le navigateur ne remplace pas une sauvegarde. L’accès depuis l’iPhone et l’iPad sera proposé avec l’hébergement privé.</p></section>
+  </dialog>
+  <dialog id="note-dialog" aria-labelledby="note-title">
+    <div class="search-dialog-heading"><div><p class="eyebrow" id="note-person"></p><h2 id="note-title">Ma note personnelle</h2></div><button type="button" class="icon-button" id="close-note" aria-label="Fermer la note">×</button></div>
+    <label for="note-text" class="note-label">Souvenirs, pistes de recherche, questions à approfondir…</label><textarea id="note-text" rows="9" placeholder="Ce que je souhaite retenir…"></textarea><p id="note-status" role="status" aria-live="polite"></p><button type="button" id="save-note" class="primary-button">Enregistrer ma note</button>
+  </dialog>
+  <noscript><p class="error-message">Activez JavaScript pour consulter cet arbre.</p></noscript>
+</body>
+</html>
