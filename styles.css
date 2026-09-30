@@ -55,6 +55,16 @@ body[data-view=portrait] .portrait-panel{border-radius:0;box-shadow:none;padding
 .media-unavailable{color:var(--muted);font-size:11px;padding:12px 0}
 
 /* The personal notebook keeps the same quiet, editorial palette as the tree. */
+#restore-preview{border:1px solid var(--line);background:var(--tint);border-radius:8px;padding:16px;margin-top:16px;min-width:0}
+#restore-preview h4{font:19px/1.4 Georgia,serif;margin:0 0 12px;overflow-wrap:anywhere}
+#restore-pagination{align-items:center;justify-content:space-between;margin:16px 0;font-size:12px}
+#restore-pagination button{min-width:44px;min-height:44px;flex:0 0 44px}
+.restore-comparison{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:12px 0}
+.restore-comparison>div{min-width:0;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.restore-comparison h5{font-size:12px;margin:0;color:var(--green)}
+.restore-comparison pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.7 Arial,sans-serif;max-height:200px;overflow:auto;margin:8px 0 0}
+.restore-choice{display:grid;gap:8px;font-size:12px}.restore-choice select{width:100%;min-width:0;padding:12px;border:1px solid #cbd5c1;border-radius:6px;background:var(--panel);color:var(--ink);font:12px Arial,sans-serif}
+@media(max-width:759px){.restore-comparison{grid-template-columns:minmax(0,1fr)}#restore-preview{padding:12px}}
 .notebook-trigger{border:1px solid #c8d3bf;background:var(--tint);color:var(--green);border-radius:7px;min-height:38px;padding:7px 11px;display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:13px}
 .personal-tools{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.personal-tools button{min-height:38px}.favorite-button[aria-pressed=true]{background:#f2ebda;border-color:#c4ae7e;color:#705b2e}
 #notebook-dialog{width:min(700px,calc(100% - 24px));padding:28px 30px;overflow:auto}
@@ -67,3 +77,18 @@ body[data-view=portrait] .portrait-panel{border-radius:0;box-shadow:none;padding
 @media(max-width:950px){.app-header{gap:12px}.notebook-trigger{min-height:38px;padding:6px 9px}}
 @media(max-width:759px){.app-header{gap:8px;padding:0 12px}.view-nav{gap:8px}.view-nav svg{display:none}.notebook-trigger{font-size:12px;padding:6px 8px}.personal-tools button{min-height:44px}#notebook-dialog{padding:23px 19px}.notebook-intro{font-size:15px}.notebook-toolbar{gap:6px}.notebook-actions>button{min-height:44px;flex:1 1 155px}}
 @media(max-width:370px){.notebook-trigger{gap:0}.notebook-trigger span{display:none}.view-nav button{font-size:10px}.brand{font-size:25px}}
+
+/* Keep notebook actions comfortable in either orientation, including with a mouse. */
+.notebook-trigger,.personal-tools button,.notebook-actions>button{min-height:44px}
+dialog .icon-button{min-width:44px;min-height:44px}
+.notebook-toolbar select,.restore-choice select{min-height:44px;font-size:16px}
+dialog{overscroll-behavior:contain;scroll-padding-block:16px}
+@media(any-pointer:coarse){
+  .primary-button,.outline-button{min-height:44px}
+  .notebook-trigger{min-height:44px}
+  .family-choices select{font-size:16px;min-height:44px}
+  .family-choices .siblings-choice{min-height:44px}
+  .zoom-value{min-height:44px}
+}
+
+.usage-guide{border-top:1px solid var(--line);margin-top:12px}.usage-guide summary{min-height:44px;padding:13px 0;cursor:pointer;font-size:13px;color:var(--green)}.usage-guide ol{padding-left:22px;font-size:12px;line-height:1.8;color:var(--muted)}.usage-guide li{padding:4px 0}

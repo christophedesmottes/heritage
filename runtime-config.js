@@ -1,1 +1,1 @@
-export const runtime = {"mode":"family","endpoint":"https://plexhqgdxdejijgxviie.supabase.co/functions/v1/family-access","treeId":"36916abc-3366-4c02-8d10-a654cc741b34","sourceSha":"72a26859d864978f8343573676e2644e22478a921cea49ed3fa402303e36962b","accessMode":"preview"};
+export const runtime = {"mode":"family","endpoint":"https://plexhqgdxdejijgxviie.supabase.co/functions/v1/family-access","treeId":"36916abc-3366-4c02-8d10-a654cc741b34","sourceSha":"72a26859d864978f8343573676e2644e22478a921cea49ed3fa402303e36962b"};

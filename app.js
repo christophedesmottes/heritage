@@ -1,5 +1,5 @@
 import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex } from './lib/genealogy.js';
-import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll } from './lib/tree-layout.js';
+import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
 import { familyMode, initializeFamilyAccess, requestFamilyCode, lockFamily } from './lib/family-ui.js';
@@ -365,12 +365,20 @@ viewport.addEventListener('pointerup', endDrag);
 viewport.addEventListener('pointercancel', endDrag);
 viewport.addEventListener('lostpointercapture', endDrag);
 
+const cancelPinch = bindPinch(viewport,
+  () => state.layout && state.view === 'tree' ? { zoom: state.zoom, left: viewport.scrollLeft, top: viewport.scrollTop } : null,
+  frame => {
+    state.framing = 'selection';
+    state.zoom = frame.zoom; updateZoom();
+    viewport.scrollLeft = frame.left; viewport.scrollTop = frame.top;
+  });
 let previousSize = '';
 new ResizeObserver(entries => {
   const { width, height } = entries[0].contentRect;
   const size = `${Math.round(width)}:${Math.round(height)}`;
   if (!state.data || !width || size === previousSize) return;
   previousSize = size;
+  cancelPinch();
   requestAnimationFrame(frameTree);
 }).observe(viewport);
 
