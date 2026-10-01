@@ -6,7 +6,7 @@ import { familyMode, initializeFamilyAccess, requestFamilyCode, lockFamily } fro
 
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const state = { data: null, center: '', selected: '', scope: 'all', view: 'tree', panel: innerWidth >= 760, zoom: innerWidth < 500 ? .9 : 1, history: [], layout: null, parentFamilyId: '', searchIndex: [], searchLimit: 60, ancestorDepth: 3, showSiblings: true, framing: innerWidth >= 760 ? 'overview' : 'selection', selectedKey: '' };
+const state = { data: null, center: '', selected: '', scope: 'all', view: 'tree', panel: innerWidth >= 760, zoom: innerWidth < 500 ? .9 : 1, history: [], layout: null, parentFamilyId: '', searchIndex: [], searchLimit: 60, ancestorDepth: 3, descendantDepth: 3, showSiblings: true, framing: innerWidth >= 760 ? 'overview' : 'selection', selectedKey: '' };
 const viewport = $('#tree-viewport');
 const panel = $('#portrait-panel');
 const dialog = $('#search-dialog');
@@ -109,7 +109,8 @@ function renderFamilyChoices() {
   const parentPicker = layout.parentalFamilies.length > 1 ? `<label>Parents affichés<select id="parent-choice" aria-label="Choisir une famille parentale">${layout.parentalFamilies.map(f => { const pedigree = p.parentLinks?.find(l => l.familyId === f.id)?.pedigree; return `<option value="${escape(f.id)}" ${f.id === layout.parentFamilyId ? 'selected' : ''}>${escape(f.parents.map(id => state.data.people[id]?.name).join(' et '))}${pedigree ? ` · ${escape(pedigreeLabel(pedigree))}` : ''}</option>`; }).join('')}</select></label>` : '';
   const depthPicker = `<label class="depth-choice">Ancêtres<select id="depth-choice" aria-label="Nombre de générations d’ancêtres" title="1 : parents · 2 : grands-parents · 3 : arrière-grands-parents">${[1, 2, 3, 4, 5].map(depth => `<option value="${depth}" ${depth === state.ancestorDepth ? 'selected' : ''}>${depth} génération${depth > 1 ? 's' : ''}</option>`).join('')}</select></label>`;
   const siblingsPicker = `<label class="siblings-choice" title="Fratrie et conjoints de la personne centrale et de chaque ancêtre affiché"><input id="siblings-choice" type="checkbox" aria-label="Afficher les frères et sœurs" ${state.showSiblings ? 'checked' : ''} ${state.scope === 'parents' ? 'disabled' : ''}>Fratrie</label>`;
-  $('#family-choices').innerHTML = parentPicker + depthPicker + siblingsPicker;
+  const descendantsPicker = `<label class="depth-choice">Descendants<select id="descendant-choice" aria-label="Nombre de générations de descendants" ${state.scope === 'parents' ? 'disabled' : ''}>${[1,2,3,4,5].map(depth=>`<option value="${depth}" ${depth===state.descendantDepth?'selected':''}>${depth} génération${depth>1?'s':''}</option>`).join('')}</select></label>`;
+  $('#family-choices').innerHTML = parentPicker + depthPicker + descendantsPicker + siblingsPicker;
   $('#family-choices').hidden = false;
 }
 
@@ -133,7 +134,7 @@ function drawTree() {
   $('#visible-count').title = `${layout.visibleIds.length} personnes distinctes · ${layout.nodes.length} cartes`;
   $('#branch-title').textContent = `Autour de ${firstName(state.data.people[state.center])}`;
   const pedigree = pedigreeLabel(state.data.people[state.center].parentLinks?.find(link => link.familyId === layout.parentFamilyId)?.pedigree);
-  $('#sample-hint').textContent = `${pedigree ? `Filiation : ${pedigree} · ` : ''}${state.ancestorDepth} génération${state.ancestorDepth > 1 ? 's' : ''} d’ancêtres${state.scope === 'parents' ? '' : ' · Enfants : 1 génération'}${layout.warnings.cycles ? ' · Lien cyclique interrompu' : ''}${layout.warnings.alternativeParents ? ' · Certains ancêtres ont plusieurs filiations : ouvrir leur branche pour choisir' : ''}`;
+  $('#sample-hint').textContent = `${pedigree ? `Filiation : ${pedigree} · ` : ''}${state.ancestorDepth} génération${state.ancestorDepth > 1 ? 's' : ''} d’ancêtres${state.scope === 'parents' ? '' : ` · Descendants : ${state.descendantDepth} génération${state.descendantDepth > 1 ? 's' : ''}`}${layout.warnings.cycles ? ' · Lien cyclique interrompu' : ''}${layout.warnings.alternativeParents ? ' · Certains ancêtres ont plusieurs filiations : ouvrir leur branche pour choisir' : ''}`;
   updateZoom();
 }
 
@@ -222,7 +223,7 @@ function togglePanel(open = !state.panel) {
 
 function recenter(personId, parentFamilyId = '') {
   if (!state.data.people[personId]) return;
-  if (state.center !== personId || (parentFamilyId && state.parentFamilyId !== parentFamilyId)) state.history.push({ center: state.center, selected: state.selected, scope: state.scope, zoom: state.zoom, parentFamilyId: state.parentFamilyId, ancestorDepth: state.ancestorDepth, showSiblings: state.showSiblings, framing: state.framing, selectedKey: state.selectedKey });
+  if (state.center !== personId || (parentFamilyId && state.parentFamilyId !== parentFamilyId)) state.history.push({ center: state.center, selected: state.selected, scope: state.scope, zoom: state.zoom, parentFamilyId: state.parentFamilyId, ancestorDepth: state.ancestorDepth, descendantDepth: state.descendantDepth, showSiblings: state.showSiblings, framing: state.framing, selectedKey: state.selectedKey });
   // An overview of a very large family should not make the next family unreadable.
   if (state.zoom < .3) state.zoom = isMobile() ? .9 : 1;
   Object.assign(state, { center: personId, selected: personId, scope: 'all', view: 'tree', parentFamilyId, selectedKey: '', framing: isMobile() ? 'selection' : 'overview' });
@@ -338,6 +339,7 @@ $('#search-more').addEventListener('click', () => { state.searchLimit += 60; ren
 $('#family-choices').addEventListener('change', event => {
   if (event.target.id === 'parent-choice') state.parentFamilyId = event.target.value;
   if (event.target.id === 'depth-choice') state.ancestorDepth = Number(event.target.value);
+  if (event.target.id === 'descendant-choice') state.descendantDepth = Number(event.target.value);
   if (event.target.id === 'siblings-choice') state.showSiblings = event.target.checked;
   const control = event.target.id;
   state.selected = state.center;
@@ -416,6 +418,7 @@ async function load() {
       state.center = saved.center;
       state.selected = data.people[saved.selected] ? saved.selected : saved.center;
       state.ancestorDepth = [1, 2, 3, 4, 5].includes(saved.ancestorDepth) ? saved.ancestorDepth : 3;
+      state.descendantDepth = [1,2,3,4,5].includes(saved.descendantDepth) ? saved.descendantDepth : 3;
       state.showSiblings = saved.showSiblings !== false;
       state.scope = saved.scope === 'parents' ? 'parents' : 'all';
       state.parentFamilyId = typeof saved.parentFamilyId === 'string' ? saved.parentFamilyId : '';
