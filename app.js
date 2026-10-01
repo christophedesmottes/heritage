@@ -1,5 +1,5 @@
 import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex } from './lib/genealogy.js';
-import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch } from './lib/tree-layout.js';
+import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
 import { familyMode, initializeFamilyAccess, requestFamilyCode, lockFamily } from './lib/family-ui.js';
@@ -337,16 +337,27 @@ $('#search-input').addEventListener('input', () => {
 });
 $('#search-more').addEventListener('click', () => { state.searchLimit += 60; renderSearch(); });
 $('#family-choices').addEventListener('change', event => {
+  const control = event.target.id;
+  const preserveFrame = control === 'depth-choice' || control === 'descendant-choice';
+  const previousLayout = state.layout;
+  const previousFrame = { zoom: state.zoom, left: viewport.scrollLeft, top: viewport.scrollTop };
   if (event.target.id === 'parent-choice') state.parentFamilyId = event.target.value;
   if (event.target.id === 'depth-choice') state.ancestorDepth = Number(event.target.value);
   if (event.target.id === 'descendant-choice') state.descendantDepth = Number(event.target.value);
   if (event.target.id === 'siblings-choice') state.showSiblings = event.target.checked;
-  const control = event.target.id;
-  state.selected = state.center;
-  state.selectedKey = '';
-  state.framing = 'overview';
-  if (isMobile()) state.panel = false;
-  render({ center: true });
+  if (preserveFrame) {
+    state.framing = 'selection';
+    render();
+    const frame = preserveTreeFrame(previousLayout, state.layout, previousFrame);
+    viewport.scrollLeft = frame.left;
+    viewport.scrollTop = frame.top;
+  } else {
+    state.selected = state.center;
+    state.selectedKey = '';
+    state.framing = 'overview';
+    if (isMobile()) state.panel = false;
+    render({ center: true });
+  }
   document.getElementById(control)?.focus({ preventScroll: true });
   announce(`${state.layout.visibleIds.length} personnes affichées, jusqu’à ${state.ancestorDepth} générations d’ancêtres`);
 });
