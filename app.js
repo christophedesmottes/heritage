@@ -338,7 +338,7 @@ $('#search-input').addEventListener('input', () => {
 $('#search-more').addEventListener('click', () => { state.searchLimit += 60; renderSearch(); });
 $('#family-choices').addEventListener('change', event => {
   const control = event.target.id;
-  const preserveFrame = control === 'depth-choice' || control === 'descendant-choice';
+  const preserveFrame = ['depth-choice', 'descendant-choice', 'siblings-choice'].includes(control);
   const previousLayout = state.layout;
   const previousFrame = { zoom: state.zoom, left: viewport.scrollLeft, top: viewport.scrollTop };
   if (event.target.id === 'parent-choice') state.parentFamilyId = event.target.value;
