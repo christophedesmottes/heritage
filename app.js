@@ -108,7 +108,7 @@ function renderFamilyChoices() {
   const p = state.data.people[state.center];
   const parentPicker = layout.parentalFamilies.length > 1 ? `<label>Parents affichés<select id="parent-choice" aria-label="Choisir une famille parentale">${layout.parentalFamilies.map(f => { const pedigree = p.parentLinks?.find(l => l.familyId === f.id)?.pedigree; return `<option value="${escape(f.id)}" ${f.id === layout.parentFamilyId ? 'selected' : ''}>${escape(f.parents.map(id => state.data.people[id]?.name).join(' et '))}${pedigree ? ` · ${escape(pedigreeLabel(pedigree))}` : ''}</option>`; }).join('')}</select></label>` : '';
   const depthPicker = `<label class="depth-choice">Ancêtres<select id="depth-choice" aria-label="Nombre de générations d’ancêtres" title="1 : parents · 2 : grands-parents · 3 : arrière-grands-parents">${[1, 2, 3, 4, 5].map(depth => `<option value="${depth}" ${depth === state.ancestorDepth ? 'selected' : ''}>${depth} génération${depth > 1 ? 's' : ''}</option>`).join('')}</select></label>`;
-  const siblingsPicker = `<label class="siblings-choice" title="Frères et sœurs de la famille parentale choisie"><input id="siblings-choice" type="checkbox" aria-label="Afficher les frères et sœurs" ${state.showSiblings ? 'checked' : ''} ${state.scope === 'parents' ? 'disabled' : ''}>Fratrie</label>`;
+  const siblingsPicker = `<label class="siblings-choice" title="Fratrie et conjoints, ainsi que la fratrie des parents et leurs conjoints"><input id="siblings-choice" type="checkbox" aria-label="Afficher les frères et sœurs" ${state.showSiblings ? 'checked' : ''} ${state.scope === 'parents' ? 'disabled' : ''}>Fratrie</label>`;
   $('#family-choices').innerHTML = parentPicker + depthPicker + siblingsPicker;
   $('#family-choices').hidden = false;
 }
@@ -310,6 +310,18 @@ $('#go-back').addEventListener('click', () => {
   render({ center: true });
   announce(`Retour à la famille de ${firstName(state.data.people[state.center])}`);
 });
+viewport.addEventListener('wheel', event => {
+  if (!state.layout || state.view !== 'tree' || !event.cancelable) return;
+  event.preventDefault();
+  const rect = viewport.getBoundingClientRect();
+  const x = event.clientX - rect.left, y = event.clientY - rect.top;
+  const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.clientHeight : 1;
+  const delta = Math.max(-100, Math.min(100, event.deltaY * unit));
+  const previous = state.zoom, left = viewport.scrollLeft, top = viewport.scrollTop;
+  zoomTo(state.zoom * Math.exp(-delta * .002));
+  viewport.scrollLeft = Math.max(0, (left + x - viewport.clientWidth / 2) / previous * state.zoom + viewport.clientWidth / 2 - x);
+  viewport.scrollTop = Math.max(0, (top + y - viewport.clientHeight / 2) / previous * state.zoom + viewport.clientHeight / 2 - y);
+}, { passive: false });
 $('#zoom-in').addEventListener('click', () => zoomTo(state.zoom + .1));
 $('#zoom-out').addEventListener('click', () => zoomTo(state.zoom - .1));
 $('#zoom-reset').addEventListener('click', () => { zoomTo(1); centerOnSelection(true); });
