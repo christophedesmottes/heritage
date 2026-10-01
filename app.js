@@ -207,7 +207,7 @@ function fitTree() {
 }
 
 function frameTree() {
-  if (isMobile() && state.panel) { state.framing = 'selection'; state.zoom = Math.max(.85, state.zoom); }
+  if (isMobile() && state.panel) state.framing = 'selection';
   updateZoom();
   if (state.framing === 'overview') fitTree();
   else centerOnSelection(true);
@@ -404,7 +404,15 @@ new ResizeObserver(entries => {
   if (!state.data || !width || size === previousSize) return;
   previousSize = size;
   cancelPinch();
-  requestAnimationFrame(frameTree);
+  requestAnimationFrame(() => {
+    if (state.framing === 'overview') { frameTree(); return; }
+    // Safari's controls and native selectors can resize the canvas. A manual
+    // view keeps its zoom and scene center instead of framing the selection.
+    const left = viewport.scrollLeft, top = viewport.scrollTop;
+    updateZoom();
+    viewport.scrollLeft = left;
+    viewport.scrollTop = top;
+  });
 }).observe(viewport);
 
 async function load() {

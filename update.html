@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mettre à jour Héritage</title>
+<style>body{margin:0;background:#f8f7f1;color:#224838;font:17px/1.6 system-ui}main{max-width:600px;padding:24px;margin:30px auto}h1{font:36px Georgia}button,a{font:inherit}button{padding:14px;background:#224838;color:white;border:0;border-radius:6px;min-height:48px}button:disabled{opacity:.5}a{color:inherit}</style></head>
+<body><main><h1>Mettre à jour Héritage</h1><p>Ce parcours remplace le programme conservé dans ce navigateur. Vos notes, favoris, accès familial et photos ne sont pas effacés.</p><p>Enregistrez d’abord les notes ouvertes dans les autres fenêtres d’Héritage. Sur iPhone ou iPad, utilisez ce parcours dans le contexte à actualiser : Safari ou l’application ouverte depuis son icône.</p><button id="update">Mettre à jour maintenant</button><p id="status" role="status"></p><a href="./">Retour à Héritage</a></main>
+<script>
+document.querySelector('#update').addEventListener('click', async () => {
+  const button=document.querySelector('#update'), status=document.querySelector('#status');
+  button.disabled=true;status.textContent='Recherche et téléchargement du programme…';
+  try {
+    if(!navigator.serviceWorker || !isSecureContext)throw Error('Ouvrez ce lien avec une adresse HTTPS.');
+    const registration=await navigator.serviceWorker.register('./sw.js',{type:'module',updateViaCache:'none'});
+    await registration.update();
+    const worker=registration.installing;
+    // The recovery page is deliberately outside the shell cache and has no
+    // dependency on the old application's modules.
+    const deadline=Date.now()+30000;
+    while(registration.installing && !registration.waiting && Date.now()<deadline)await new Promise(r=>setTimeout(r,100));
+    if(registration.installing)throw Error('Téléchargement encore en cours. Réessayez dans quelques instants.');
+    if(worker?.state==='redundant')throw Error('Téléchargement incomplet. La version précédente est conservée.');
+    if(registration.waiting){
+      status.textContent='Activation de la nouvelle version…';
+      await new Promise((resolve,reject)=>{
+        const changed=()=>{clearTimeout(timer);navigator.serviceWorker.removeEventListener('controllerchange',changed);resolve();};
+        const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',changed);reject(Error('Activation en attente. Fermez puis rouvrez Héritage.'));},15000);
+        navigator.serviceWorker.addEventListener('controllerchange',changed);
+        registration.waiting.postMessage({type:'ACTIVATE_UPDATE'});
+      });
+    }
+    status.textContent='Programme actualisé. Retour à Héritage…';location.replace('./');
+  }catch(error){status.textContent='Mise à jour non terminée. '+error.message;button.disabled=false;}
+});
+</script></body></html>
