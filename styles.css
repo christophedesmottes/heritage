@@ -133,3 +133,7 @@ dialog{overscroll-behavior:contain;scroll-padding-block:16px}
 .kin-chart { margin-top:12px; }
 .kin-chart-viewport { height:clamp(260px, calc(100dvh - 365px), 640px); }
 @media(max-width:759px) { #kinship-dialog { padding:14px; } .kin-chart-viewport { height:48dvh; } }
+
+/* Dragging the relationship canvas must not select names or drag portraits. */
+.kin-chart-viewport { user-select:none; -webkit-user-select:none; }
+.kin-chart-person img { -webkit-user-drag:none; }

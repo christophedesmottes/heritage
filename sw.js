@@ -1,4 +1,4 @@
-// Héritage 0.14.0 — graphique de parenté, cadrage final et gestes ; change this marker with every release.
+// Héritage 0.14.1 — déplacement du graphique sans sélection native ; change this marker with every release.
 import { SHELL, SHELL_CACHE, DATA_CACHE, MEDIA_CACHE, resourceType } from './lib/offline-config.js';
 import { runtime } from './runtime-config.js';
 import { accessStore } from './lib/family-session.js';

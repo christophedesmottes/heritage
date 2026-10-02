@@ -347,8 +347,11 @@ function bindKinshipChart() {
   view.addEventListener('pointerdown', event => {
     moved = false;
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    event.preventDefault(); // Pan the canvas without starting native text/image selection.
+    (event.target.closest('button') || view).focus({ preventScroll: true });
     drag = { x: event.clientX, y: event.clientY, left: view.scrollLeft, top: view.scrollTop, id: event.pointerId };
   });
+  view.addEventListener('dragstart', event => event.preventDefault());
   view.addEventListener('pointermove', event => {
     if (!drag) return;
     if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 5) { moved = true; view.setPointerCapture(drag.id); }
