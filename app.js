@@ -1,4 +1,4 @@
-import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex } from './lib/genealogy.js';
+import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds } from './lib/genealogy.js';
 import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
@@ -10,6 +10,8 @@ const state = { data: null, center: '', selected: '', scope: 'all', view: 'tree'
 const viewport = $('#tree-viewport');
 const panel = $('#portrait-panel');
 const dialog = $('#search-dialog');
+const kinshipDialog = $('#kinship-dialog');
+let kinshipGraph, kinshipFrom = '', kinshipTo = '', searchTarget = 'center', branchReference = '', branchQuery = '';
 const isMobile = () => matchMedia('(max-width:759px)').matches;
 const firstName = p => p.firstName?.split(' ')[0] || p.name;
 const displayName = p => p.name || `${p.firstName} ${p.surname}`.trim();
@@ -88,6 +90,7 @@ function renderProfile() {
     <div class="profile-identification"><div class="profile-avatar" aria-hidden="true">${photoMarkup(p, 'profile-photo')}</div><div><h2 class="portrait-name" tabindex="-1">${escape(p.firstName)}<span>${escape(p.surname)}</span></h2><p class="portrait-years">${escape(lifeSpan(p))}</p></div></div>
     <p class="relationship">${escape(selectedRelationship())}</p>
     <div class="profile-actions">${state.view === 'portrait' ? '<button type="button" class="outline-button" data-view="tree">← Revenir à l’arbre</button>' : '<button type="button" class="outline-button" data-view="portrait">Lire le portrait</button>'}<button type="button" class="outline-button" data-explore="${escape(p.id)}">Explorer sa famille ${navigateIcon}</button></div>
+    <button type="button" class="outline-button profile-kinship" data-kinship="${escape(p.id)}">Comparer son lien de parenté</button>
     ${profileTools(p)}
   </div>
   <details class="profile-section" open><summary>Événements</summary><ol class="timeline" aria-label="Événements de cette vie">${events.map(e => eventMarkup(e.type || EVENT_LABELS[e.tag] || 'Événement', e, [e.value === 'Y' ? '' : e.value, e.context].filter(Boolean).join(' · '))).join('')}</ol></details>
@@ -251,8 +254,32 @@ function selectPerson(personId, occurrence = '') {
 }
 
 function renderSearch() {
-  const result = queryIndex(state.searchIndex, $('#search-input').value, 0, state.searchLimit);
-  $('#search-count').textContent = `${countLabel(result.total, 'personne trouvée', 'personnes trouvées')} · ${result.ids.length} affichées`;
+  const filters = {};
+  $('#search-reference').textContent = `Référence : ${displayName(state.data.people[branchReference || state.center])}`;
+  if (searchTarget === 'center') {
+    for (const field of ['from', 'to']) {
+      const input = $(`#search-${field}`);
+      input.removeAttribute('aria-invalid');
+      if (input.value !== '') {
+        const year = Number(input.value);
+        if (!input.validity.valid || !Number.isInteger(year) || year < 1 || year > 9999) {
+          input.setAttribute('aria-invalid', 'true');
+          $('#search-count').textContent = 'Saisissez une année entière entre 1 et 9999.';
+          $('#search-results').replaceChildren(); $('#search-more').hidden = true; return;
+        }
+        filters[field] = year;
+      }
+    }
+    if (filters.from > filters.to) {
+      $('#search-count').textContent = 'L’année de début doit précéder ou égaler l’année de fin.';
+      $('#search-results').replaceChildren(); $('#search-more').hidden = true; return;
+    }
+    filters.event = $('#search-event').value; filters.place = $('#search-place').value;
+    if ($('#search-branch').value !== 'all') filters.ids = branchIds(kinshipGraph, branchReference || state.center, $('#search-branch').value);
+  }
+  const result = queryIndex(state.searchIndex, $('#search-input').value, 0, state.searchLimit, filters);
+  const active = filters.from !== undefined || filters.to !== undefined || filters.place || filters.ids;
+  $('#search-count').textContent = `${countLabel(result.total, 'personne trouvée', 'personnes trouvées')} · ${result.ids.length} affichée${result.ids.length === 1 ? '' : 's'}${active ? ' · filtres actifs' : ''}`;
   $('#search-results').innerHTML = result.ids.length ? result.ids.map(id => {
     const p = state.data.people[id];
     const context = [p.birth.place || p.death.place, p.id].filter(Boolean).join(' · ');
@@ -261,13 +288,36 @@ function renderSearch() {
   $('#search-more').hidden = !result.hasMore;
 }
 
-function openSearch() {
+function openSearch(target = 'center') {
   if (!state.data) return;
+  searchTarget = target;
+  $('#search-title').textContent = target === 'center' ? 'Rechercher une personne' : target === 'branch' ? 'Choisir la référence de la branche' : 'Choisir une personne à comparer';
+  $('#search-filters').hidden = target !== 'center';
   $('#search-input').value = '';
   state.searchLimit = 60;
   renderSearch();
   dialog.showModal();
   $('#search-input').focus();
+}
+
+function renderKinship() {
+  $('#kinship-from').textContent = displayName(state.data.people[kinshipFrom]);
+  $('#kinship-to').textContent = kinshipTo ? displayName(state.data.people[kinshipTo]) : 'Choisir une personne';
+  if (!kinshipTo) { $('#kinship-result').textContent = 'Choisissez la seconde personne pour découvrir le lien.'; return; }
+  const result = findKinship(state.data, kinshipFrom, kinshipTo, kinshipGraph);
+  const edgeLabel = edge => ({ parent: 'Parent', child: 'Enfant', partner: 'Conjoint·e / autre parent' }[edge.kind])
+    + (edge.pedigree.length ? ` · ${edge.pedigree.map(pedigreeLabel).join(', ')}` : '');
+  const explanation = !result.generations ? '' : result.generations.every(n => n > 0)
+    ? `Ancêtre commun retenu : ${escape(displayName(state.data.people[result.ancestor]))}.<br>${result.generations[0]} génération(s) depuis le départ · ${result.generations[1]} depuis la personne comparée.`
+    : `${Math.max(...result.generations)} génération(s) de filiation séparent ces deux personnes.`;
+  $('#kinship-result').innerHTML = `<h3>${escape(result.label)}</h3><p>${escape(displayName(state.data.people[kinshipTo]))} par rapport à ${escape(displayName(state.data.people[kinshipFrom]))}.</p>${explanation ? `<p>${explanation}</p>` : ''}${result.path.length ? `<ol class="kinship-path">${result.path.map((id, i) => `<li>${i ? `<p class="kinship-step">${result.steps[i - 1].kind === 'parent' ? '↑' : result.steps[i - 1].kind === 'child' ? '↓' : '↔'} ${escape(edgeLabel(result.steps[i - 1]))} de la personne précédente</p>` : ''}<button type="button" class="search-result" data-path-person="${escape(id)}"><span class="mini-avatar" aria-hidden="true">${escape(monogram(state.data.people[id]))}</span><span class="result-copy"><span class="result-name">${escape(displayName(state.data.people[id]))}</span><span class="result-years">${escape(lifeSpan(state.data.people[id]))}</span></span><span aria-hidden="true">↗</span></button></li>`).join('')}</ol>` : ''}`;
+}
+
+function openKinship(personId = state.selected) {
+  if (!state.data) return;
+  kinshipFrom = state.center;
+  kinshipTo = personId !== kinshipFrom ? personId : '';
+  renderKinship(); kinshipDialog.showModal();
 }
 
 function changeView(view) {
@@ -295,8 +345,19 @@ document.addEventListener('click', event => {
     announce(`${state.layout.visibleIds.length} personnes affichées`);
   } else if (b.dataset.result) {
     dialog.close();
+    if (searchTarget === 'branch') {
+      branchReference = b.dataset.result; openSearch(); $('#search-input').value = branchQuery; renderSearch(); return;
+    }
+    if (searchTarget !== 'center') {
+      if (searchTarget === 'from') kinshipFrom = b.dataset.result; else kinshipTo = b.dataset.result;
+      renderKinship(); kinshipDialog.showModal(); return;
+    }
     recenter(b.dataset.result);
     if (!isMobile()) togglePanel(true);
+  } else if (b.dataset.kinship) {
+    openKinship(b.dataset.kinship);
+  } else if (b.dataset.pathPerson) {
+    kinshipDialog.close(); recenter(b.dataset.pathPerson); if (!isMobile()) togglePanel(true);
   }
 });
 
@@ -327,7 +388,24 @@ $('#zoom-in').addEventListener('click', () => zoomTo(state.zoom + .1));
 $('#zoom-out').addEventListener('click', () => zoomTo(state.zoom - .1));
 $('#zoom-reset').addEventListener('click', () => { zoomTo(1); centerOnSelection(true); });
 $('#fit-tree').addEventListener('click', () => { state.framing = 'overview'; fitTree(); });
-$('#open-search').addEventListener('click', openSearch);
+$('#open-search').addEventListener('click', () => openSearch());
+$('#open-kinship').addEventListener('click', () => openKinship());
+$('#close-kinship').addEventListener('click', () => kinshipDialog.close());
+for (const target of ['from', 'to']) $(`#kinship-${target}`).addEventListener('click', () => { kinshipDialog.close(); openSearch(target); });
+$('#kinship-swap').addEventListener('click', () => { if (!kinshipTo) return; [kinshipFrom, kinshipTo] = [kinshipTo, kinshipFrom]; renderKinship(); });
+dialog.addEventListener('close', () => {
+  if (searchTarget === 'from' || searchTarget === 'to') {
+    // Cancel/Escape returns to the comparison; selecting a result opens it synchronously.
+    if (!kinshipDialog.open) { renderKinship(); kinshipDialog.showModal(); }
+  }
+});
+$('#search-reference').addEventListener('click', () => { branchQuery = $('#search-input').value; dialog.close(); openSearch('branch'); });
+$('#search-reset').addEventListener('click', () => {
+  for (const field of ['from', 'to', 'place']) $(`#search-${field}`).value = '';
+  $('#search-event').value = 'birth'; $('#search-branch').value = 'all'; branchReference = '';
+  state.searchLimit = 60; renderSearch();
+});
+for (const field of ['from', 'to', 'place', 'event', 'branch']) $(`#search-${field}`).addEventListener('input', () => { state.searchLimit = 60; renderSearch(); });
 $('#close-search').addEventListener('click', () => dialog.close());
 let searchTimer;
 $('#search-input').addEventListener('input', () => {
@@ -430,6 +508,7 @@ async function load() {
     const data = await response.json();
     if (!data.people?.[data.meta?.rootId]) throw new Error('Arbre invalide');
     state.data = data;
+    kinshipGraph = buildKinshipGraph(data);
     state.searchIndex = buildSearchIndex(data.people);
     state.center = state.selected = data.meta.rootId;
     const saved = await initPersonal(data, personId => { recenter(personId); selectPerson(personId); });

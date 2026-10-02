@@ -45,6 +45,7 @@
           <div class="tree-status"><strong id="visible-count"></strong><span id="branch-title">Notre famille</span></div>
           <div class="segmented" aria-label="Personnes affichées"><button type="button" data-scope="all" aria-pressed="true">Famille</button><button type="button" data-scope="parents" aria-pressed="false">Ascendance</button></div>
           <button class="search-trigger" type="button" id="open-search" aria-label="Rechercher une personne"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Rechercher une personne…</span><kbd aria-hidden="true">/</kbd></button>
+          <button type="button" class="outline-button kinship-trigger" id="open-kinship">Parenté</button>
         </div>
         <div id="family-choices" class="family-choices" hidden></div>
         <div class="canvas-area">
@@ -61,8 +62,22 @@
   <dialog id="search-dialog" aria-labelledby="search-title">
     <div class="search-dialog-heading"><div><p class="eyebrow">Dans votre famille</p><h2 id="search-title">Rechercher une personne</h2></div><button type="button" class="icon-button" id="close-search" aria-label="Fermer la recherche">×</button></div>
     <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="search-input" placeholder="Un nom, un lieu, une année…" autocomplete="off" aria-label="Rechercher par prénom, nom, lieu ou année"></label>
+    <details class="usage-guide" id="search-filters"><summary>Filtres : dates, lieux et branche familiale</summary><div class="search-filters-grid">
+      <label>Événement daté<select id="search-event"><option value="birth">Naissance</option><option value="death">Décès</option></select></label>
+      <label>À partir de l’année<input type="number" id="search-from" min="1" max="9999" step="1" placeholder="Ex. 1900"></label>
+      <label>Jusqu’à l’année<input type="number" id="search-to" min="1" max="9999" step="1" placeholder="Ex. 1950"></label>
+      <label>Lieu d’un événement<input type="search" id="search-place" placeholder="Ville, région ou pays"></label>
+      <label>Branche familiale<select id="search-branch"><option value="all">Tout l’arbre</option><option value="ancestors">Ascendants de la référence</option><option value="descendants">Descendants de la référence</option></select></label>
+      <button type="button" class="outline-button" id="search-reference">Choisir la référence</button>
+    </div><p class="search-note">Les branches incluent leur personne de référence. Une date inconnue ne correspond pas à une période. Les dates « avant », « après » et les intervalles sont comparés à la période ; « vers » utilise l’année indiquée.</p><button type="button" id="search-reset" class="outline-button">Effacer les filtres</button></details>
     <p id="search-count" class="search-count" role="status"></p><div class="search-results" id="search-results"></div>
     <button type="button" id="search-more" class="outline-button" hidden>Afficher les résultats suivants</button><p class="search-note" id="search-note">Recherche dans tout votre arbre. Ajoutez un lieu ou une année pour distinguer les homonymes.</p>
+  </dialog>
+  <dialog id="kinship-dialog" aria-labelledby="kinship-title">
+    <div class="search-dialog-heading"><div><p class="eyebrow">Les liens de notre famille</p><h2 id="kinship-title">Comparer deux personnes</h2></div><button type="button" class="icon-button" id="close-kinship" aria-label="Fermer le lien de parenté">×</button></div>
+    <div class="kinship-people"><div><p>Personne de départ</p><button type="button" class="outline-button" id="kinship-from">Choisir une personne</button></div><button type="button" class="icon-button" id="kinship-swap" aria-label="Inverser les deux personnes">⇄</button><div><p>Personne comparée</p><button type="button" class="outline-button" id="kinship-to">Choisir une personne</button></div></div>
+    <div id="kinship-result" aria-live="polite"></div>
+    <p class="search-note">Calcul dans tout l’export, indépendant de la profondeur affichée. Un chemin est présenté ; d’autres liens peuvent exister. Les filiations déclarées, dont les adoptions, ne constituent pas une preuve de parenté biologique.</p>
   </dialog>
   <dialog id="notebook-dialog" aria-labelledby="notebook-title">
     <div class="search-dialog-heading"><div><p class="eyebrow">Votre espace personnel</p><h2 id="notebook-title">Mon carnet</h2></div><button type="button" class="icon-button" id="close-notebook" aria-label="Fermer le carnet">×</button></div>
