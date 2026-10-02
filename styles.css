@@ -137,3 +137,8 @@ dialog{overscroll-behavior:contain;scroll-padding-block:16px}
 /* Dragging the relationship canvas must not select names or drag portraits. */
 .kin-chart-viewport { user-select:none; -webkit-user-select:none; }
 .kin-chart-person img { -webkit-user-drag:none; }
+
+#notebook-sync-section input { display:block; width:100%; box-sizing:border-box; min-height:44px; padding:10px; border:1px solid var(--line); background:var(--panel); color:var(--ink); border-radius:5px; font:14px monospace; margin:8px 0; }
+#notebook-sync-section details { margin-top:14px; }
+#notebook-sync-conflicts pre { white-space:pre-wrap; overflow-wrap:anywhere; max-height:180px; overflow:auto; background:var(--panel); padding:10px; }
+#notebook-sync-conflicts article { border-top:1px solid var(--line); padding:14px 0; }
