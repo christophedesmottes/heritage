@@ -97,3 +97,39 @@ dialog{overscroll-behavior:contain;scroll-padding-block:16px}
 .search-filters-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.search-filters-grid label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted);min-width:0}.search-filters-grid input,.search-filters-grid select{width:100%;min-width:0;min-height:44px;border:1px solid #cbd5c1;border-radius:6px;padding:10px;background:var(--panel);color:var(--ink);font:16px Arial,sans-serif}.search-filters-grid button{align-self:end;min-height:44px;overflow-wrap:anywhere}.search-filters-grid input[aria-invalid=true]{border-color:#9a452c}.kinship-trigger{min-height:38px;white-space:nowrap;padding:7px 10px}.profile-kinship{margin-top:10px;min-height:44px}#kinship-dialog{width:min(700px,calc(100% - 24px));padding:28px 30px;overflow:auto}.kinship-people{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);gap:12px;align-items:center}.kinship-people p{font-size:12px;color:var(--muted)}.kinship-people .outline-button{width:100%;min-height:44px;overflow-wrap:anywhere}.kinship-path{list-style:none;padding:0}.kinship-step{font-size:12px;color:var(--green);margin:8px 0 8px 22px}.kinship-path .search-result{border:1px solid var(--line);border-radius:6px}.kinship-path .result-name{overflow-wrap:anywhere}#kinship-result>h3{font:24px/1.4 Georgia,serif;margin:24px 0 10px}#kinship-result>p{font-size:13px;line-height:1.7;color:var(--muted)}
 @media(max-width:759px){#kinship-dialog{padding:22px 18px}.kinship-people{grid-template-columns:minmax(0,1fr)}.kinship-people #kinship-swap{justify-self:center}.kinship-people p{margin:8px 0}.search-filters-grid{grid-template-columns:minmax(0,1fr)}.kinship-trigger{font-size:11px;padding:6px;min-height:44px}.tree-toolbar{flex-wrap:wrap}.search-results{max-height:38dvh}}
 #kinship-dialog .search-dialog-heading .icon-button,#search-dialog .search-dialog-heading .icon-button{align-self:flex-start;flex:0 0 44px;width:44px;height:44px}
+
+/* Simplified relationship chart; independent of the main tree framing. */
+#kinship-dialog { width:min(1180px, calc(100% - 24px)); }
+.kin-chart { margin-top:22px; border:1px solid #ccd6c8; border-radius:8px; overflow:hidden; }
+.kin-chart-tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 12px; }
+.kin-chart-tools strong { margin-right:auto; }
+.kin-chart-tools button { min-height:36px; min-width:36px; border:1px solid #ccd6c8; border-radius:5px; background:#fff; color:#234b3b; padding:5px 10px; }
+.kin-chart-tools output { font-size:12px; min-width:46px; text-align:center; }
+.kin-chart-help { padding:0 12px; font-size:12px; }
+.kin-chart-viewport { height: min(58dvh, 640px); min-height:260px; overflow:auto; background:#eff2ec; cursor:grab; overscroll-behavior:contain; touch-action:pan-x pan-y; }
+.kin-chart-viewport:active { cursor:grabbing; }
+.kin-chart-space { position:relative; }
+.kin-chart-canvas { position:absolute; left:0; top:0; transform-origin:0 0; }
+.kin-chart-canvas svg { position:absolute; inset:0; overflow:visible; color:#a35c21; }
+.kin-chart-canvas svg text { font-size:12px; fill:#674b30; stroke:#eff2ec; stroke-width:5px; paint-order:stroke; }
+.kin-route-line { fill:none; stroke:#a35c21; stroke-width:3px; }
+.kin-context-line { fill:none; stroke:#a7b1a2; stroke-width:1.5px; }
+.kin-chart-person { position:absolute; width:190px; height:140px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; background:#fff; border:1px solid #bbc9b5; border-radius:7px; color:#234b3b; padding:10px; box-shadow:0 3px 8px #234b3b0d; }
+.kin-chart-person .person-avatar { width:40px; height:40px; flex-shrink:0; }
+.kin-chart-name { font-size:13px; line-height:1.2; max-width:100%; overflow:hidden; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; }
+.kin-chart-person .result-years { font-size:11px; }
+.kin-endpoint { border:2px solid #a35c21; background:#fffaf2; }
+.kin-endpoint-label { font-size:10px; color:#94531f; text-transform:uppercase; letter-spacing:.08em; }
+.kin-context-person { border-style:dashed; }
+.kinship-detail { margin-top:20px; }
+.kinship-detail summary { cursor:pointer; padding:10px 0; }
+@media(max-width:759px) { #kinship-dialog { padding:18px 14px; } .kin-chart-tools strong { flex-basis:100%; } .kin-chart-viewport { height:48dvh; } }
+
+#kinship-dialog { max-height:95dvh; padding:20px 24px; }
+#kinship-dialog .search-dialog-heading { margin-bottom:12px; }
+.kinship-people p { margin:4px 0; }
+#kinship-result>h3 { margin:12px 0 6px; font-size:21px; }
+#kinship-result>p { margin:6px 0; }
+.kin-chart { margin-top:12px; }
+.kin-chart-viewport { height:clamp(260px, calc(100dvh - 365px), 640px); }
+@media(max-width:759px) { #kinship-dialog { padding:14px; } .kin-chart-viewport { height:48dvh; } }

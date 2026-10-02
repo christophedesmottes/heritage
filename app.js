@@ -1,4 +1,4 @@
-import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds } from './lib/genealogy.js';
+import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds, layoutKinship } from './lib/genealogy.js';
 import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
@@ -300,7 +300,73 @@ function openSearch(target = 'center') {
   $('#search-input').focus();
 }
 
+let kinshipCancel = () => {};
+function kinshipChart(result) {
+  const layout = layoutKinship(state.data, result, kinshipGraph);
+  const lookup = new Map(layout.nodes.map(n => [n.id, n]));
+  const word = (kind, person) => {
+    const sex = person.sex;
+    return kind === 'parent' ? (sex === 'F' ? 'Mère' : sex === 'M' ? 'Père' : 'Parent')
+      : kind === 'child' ? (sex === 'F' ? 'Fille' : sex === 'M' ? 'Fils' : 'Enfant')
+      : kind === 'sibling' ? (sex === 'F' ? 'Sœur / demi-sœur' : sex === 'M' ? 'Frère / demi-frère' : 'Fratrie') : 'Conjoint·e / autre parent';
+  };
+  const lines = layout.edges.map(edge => {
+    const a = lookup.get(edge.from), b = lookup.get(edge.to), horizontal = a.y === b.y;
+    const x1 = horizontal ? a.x + 190 : a.x + 95, y1 = horizontal ? a.y + 70 : a.y + (b.y > a.y ? 140 : 0);
+    const x2 = horizontal ? b.x : b.x + 95, y2 = horizontal ? b.y + 70 : b.y + (b.y > a.y ? 0 : 140);
+    const middle = (y1 + y2) / 2;
+    const d = horizontal ? `M${x1},${y1}H${x2}` : `M${x1},${y1}V${middle}H${x2}V${y2}`;
+    const label = word(edge.kind, state.data.people[b.id]) + (edge.pedigree.length ? ` · ${edge.pedigree.map(pedigreeLabel).join(', ')}` : '');
+    return `<path class="${edge.kind === 'context' ? 'kin-context-line' : 'kin-route-line'}" d="${d}" ${edge.kind !== 'context' ? 'marker-end="url(#kin-arrow)"' : ''}/>${edge.kind !== 'context' ? `<text x="${horizontal ? (x1 + x2) / 2 : x1}" y="${horizontal ? y1 - 13 : middle - 8}" text-anchor="middle">${escape(label)}</text>` : ''}`;
+  }).join('');
+  return `<section class="kin-chart" aria-label="Arbre simplifié du lien de parenté"><div class="kin-chart-tools"><strong>Arbre du lien de parenté</strong><button type="button" data-kin-zoom="out" aria-label="Dézoomer le graphique">−</button><output id="kin-chart-zoom">100 %</output><button type="button" data-kin-zoom="in" aria-label="Zoomer le graphique">+</button><button type="button" data-kin-zoom="fit">Tout voir</button></div><p class="kin-chart-help">Chemin en couleur · parents communs en gris. Molette ou pincement pour zoomer ; glissez pour déplacer.</p><div class="kin-chart-viewport" tabindex="0" aria-label="Graphique défilant, utilisez aussi les touches fléchées"><div class="kin-chart-space"><div class="kin-chart-canvas" style="width:${layout.width}px;height:${layout.height}px"><svg width="${layout.width}" height="${layout.height}" aria-hidden="true"><defs><marker id="kin-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="currentColor"/></marker></defs>${lines}</svg>${layout.nodes.map(n => {
+    const person = state.data.people[n.id], endpoint = n.id === result.path[0] || n.id === result.path.at(-1);
+    return `<button type="button" class="kin-chart-person ${n.context ? 'kin-context-person' : ''} ${endpoint ? 'kin-endpoint' : ''}" data-chart-person="${escape(n.id)}" style="left:${n.x}px;top:${n.y}px" aria-label="Explorer ${escape(displayName(person))}">${photoMarkup(person)}<span class="kin-chart-name">${escape(displayName(person))}</span><span class="result-years">${escape(lifeSpan(person))}</span>${endpoint ? `<span class="kin-endpoint-label">${n.id === result.path[0] ? 'Départ' : 'Arrivée'}</span>` : ''}</button>`;
+  }).join('')}</div></div></div></section>`;
+}
+function bindKinshipChart() {
+  const view = $('.kin-chart-viewport'); if (!view) return;
+  const canvas = $('.kin-chart-canvas'), space = $('.kin-chart-space');
+  const width = parseFloat(canvas.style.width), height = parseFloat(canvas.style.height);
+  let zoom = 1, drag = null, moved = false;
+  const apply = value => {
+    zoom = Math.max(.03, Math.min(1.6, value));
+    canvas.style.transform = `scale(${zoom})`; space.style.width = `${width * zoom}px`; space.style.height = `${height * zoom}px`;
+    $('#kin-chart-zoom').textContent = `${Math.round(zoom * 100)} %`;
+  };
+  const scale = (value, x = view.clientWidth / 2, y = view.clientHeight / 2) => {
+    const left = (view.scrollLeft + x) / zoom, top = (view.scrollTop + y) / zoom;
+    apply(value); view.scrollLeft = left * zoom - x; view.scrollTop = top * zoom - y;
+  };
+  const fit = () => { apply(Math.min(1, view.clientWidth / width, view.clientHeight / height)); view.scrollLeft = view.scrollTop = 0; };
+  $('.kin-chart-tools').addEventListener('click', event => {
+    const action = event.target.closest('[data-kin-zoom]')?.dataset.kinZoom;
+    if (action === 'fit') fit(); else if (action) scale(zoom * (action === 'in' ? 1.2 : 1 / 1.2));
+  });
+  view.addEventListener('wheel', event => { event.preventDefault(); const r = view.getBoundingClientRect(); scale(zoom * Math.exp(-Math.max(-100, Math.min(100, event.deltaY)) * .002), event.clientX - r.left, event.clientY - r.top); }, { passive: false });
+  view.addEventListener('pointerdown', event => {
+    moved = false;
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    drag = { x: event.clientX, y: event.clientY, left: view.scrollLeft, top: view.scrollTop, id: event.pointerId };
+  });
+  view.addEventListener('pointermove', event => {
+    if (!drag) return;
+    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 5) { moved = true; view.setPointerCapture(drag.id); }
+    if (moved) { view.scrollLeft = drag.left + drag.x - event.clientX; view.scrollTop = drag.top + drag.y - event.clientY; }
+  });
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) view.addEventListener(type, () => { drag = null; });
+  view.addEventListener('click', event => { if (moved) { event.preventDefault(); event.stopImmediatePropagation(); moved = false; } }, true);
+  kinshipCancel = bindPinch(view, () => ({ zoom, left: view.scrollLeft + view.clientWidth / 2, top: view.scrollTop + view.clientHeight / 2 }), frame => { apply(frame.zoom); view.scrollLeft = frame.left - view.clientWidth / 2; view.scrollTop = frame.top - view.clientHeight / 2; }, { min: .03 });
+  requestAnimationFrame(() => {
+    // Open at a readable scale near the departure; overview remains a deliberate action.
+    apply(.85);
+    const departure = canvas.querySelector('[data-chart-person="' + CSS.escape(kinshipFrom) + '"]');
+    view.scrollLeft = parseFloat(departure.style.left) * zoom - view.clientWidth / 2 + 95 * zoom;
+    view.scrollTop = parseFloat(departure.style.top) * zoom - view.clientHeight + 170 * zoom;
+  });
+}
 function renderKinship() {
+  kinshipCancel();
   $('#kinship-from').textContent = displayName(state.data.people[kinshipFrom]);
   $('#kinship-to').textContent = kinshipTo ? displayName(state.data.people[kinshipTo]) : 'Choisir une personne';
   if (!kinshipTo) { $('#kinship-result').textContent = 'Choisissez la seconde personne pour découvrir le lien.'; return; }
@@ -310,7 +376,8 @@ function renderKinship() {
   const explanation = !result.generations ? '' : result.generations.every(n => n > 0)
     ? `Ancêtre commun retenu : ${escape(displayName(state.data.people[result.ancestor]))}.<br>${result.generations[0]} génération(s) depuis le départ · ${result.generations[1]} depuis la personne comparée.`
     : `${Math.max(...result.generations)} génération(s) de filiation séparent ces deux personnes.`;
-  $('#kinship-result').innerHTML = `<h3>${escape(result.label)}</h3><p>${escape(displayName(state.data.people[kinshipTo]))} par rapport à ${escape(displayName(state.data.people[kinshipFrom]))}.</p>${explanation ? `<p>${explanation}</p>` : ''}${result.path.length ? `<ol class="kinship-path">${result.path.map((id, i) => `<li>${i ? `<p class="kinship-step">${result.steps[i - 1].kind === 'parent' ? '↑' : result.steps[i - 1].kind === 'child' ? '↓' : '↔'} ${escape(edgeLabel(result.steps[i - 1]))} de la personne précédente</p>` : ''}<button type="button" class="search-result" data-path-person="${escape(id)}"><span class="mini-avatar" aria-hidden="true">${escape(monogram(state.data.people[id]))}</span><span class="result-copy"><span class="result-name">${escape(displayName(state.data.people[id]))}</span><span class="result-years">${escape(lifeSpan(state.data.people[id]))}</span></span><span aria-hidden="true">↗</span></button></li>`).join('')}</ol>` : ''}`;
+  $('#kinship-result').innerHTML = `<h3>${escape(result.label)}</h3><p>${escape(displayName(state.data.people[kinshipTo]))} par rapport à ${escape(displayName(state.data.people[kinshipFrom]))}.</p>${explanation ? `<p>${explanation}</p>` : ''}${result.path.length ? `${kinshipChart(result)}<details class="kinship-detail"><summary>Détail du chemin, étape par étape</summary><ol class="kinship-path">${result.path.map((id, i) => `<li>${i ? `<p class="kinship-step">${result.steps[i - 1].kind === 'parent' ? '↑' : result.steps[i - 1].kind === 'child' ? '↓' : '↔'} ${escape(edgeLabel(result.steps[i - 1]))} de la personne précédente</p>` : ''}<button type="button" class="search-result" data-path-person="${escape(id)}"><span class="mini-avatar" aria-hidden="true">${escape(monogram(state.data.people[id]))}</span><span class="result-copy"><span class="result-name">${escape(displayName(state.data.people[id]))}</span><span class="result-years">${escape(lifeSpan(state.data.people[id]))}</span></span><span aria-hidden="true">↗</span></button></li>`).join('')}</ol></details>` : ''}`;
+  bindKinshipChart();
 }
 
 function openKinship(personId = state.selected) {
@@ -356,8 +423,8 @@ document.addEventListener('click', event => {
     if (!isMobile()) togglePanel(true);
   } else if (b.dataset.kinship) {
     openKinship(b.dataset.kinship);
-  } else if (b.dataset.pathPerson) {
-    kinshipDialog.close(); recenter(b.dataset.pathPerson); if (!isMobile()) togglePanel(true);
+  } else if (b.dataset.pathPerson || b.dataset.chartPerson) {
+    kinshipDialog.close(); recenter(b.dataset.pathPerson || b.dataset.chartPerson); if (!isMobile()) togglePanel(true);
   }
 });
 
