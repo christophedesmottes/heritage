@@ -46,6 +46,7 @@
           <div class="segmented" aria-label="Personnes affichées"><button type="button" data-scope="all" aria-pressed="true">Famille</button><button type="button" data-scope="parents" aria-pressed="false">Ascendance</button></div>
           <button class="search-trigger" type="button" id="open-search" aria-label="Rechercher une personne"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Rechercher une personne…</span><kbd aria-hidden="true">/</kbd></button>
           <button type="button" class="outline-button kinship-trigger" id="open-kinship">Parenté</button>
+          <button type="button" id="open-review" class="outline-button" disabled>À vérifier</button>
         </div>
         <div id="family-choices" class="family-choices" hidden></div>
         <div class="canvas-area">
@@ -72,6 +73,13 @@
     </div><p class="search-note">Les branches incluent leur personne de référence. Une date inconnue ne correspond pas à une période. Les dates « avant », « après » et les intervalles sont comparés à la période ; « vers » utilise l’année indiquée.</p><button type="button" id="search-reset" class="outline-button">Effacer les filtres</button></details>
     <p id="search-count" class="search-count" role="status"></p><div class="search-results" id="search-results"></div>
     <button type="button" id="search-more" class="outline-button" hidden>Afficher les résultats suivants</button><p class="search-note" id="search-note">Recherche dans tout votre arbre. Ajoutez un lieu ou une année pour distinguer les homonymes.</p>
+  </dialog>
+  <dialog id="review-dialog" aria-labelledby="review-title">
+    <div class="search-dialog-heading"><div><p class="eyebrow">Vos pistes de recherche</p><h2 id="review-title">À vérifier</h2></div><button type="button" class="icon-button" id="close-review" aria-label="Fermer l’espace à vérifier">×</button></div>
+    <p>Ces signalements sont des pistes, pas des erreurs confirmées. Ils portent sur l’export chargé. Vérifiez les sources puis corrigez dans MyHeritage si nécessaire ; l’arbre n’est jamais modifié ici.</p>
+    <div class="review-filters"><label>Type de vérification<select id="review-category"><option value="">Tous les signalements</option><option value="dates" selected>Dates à vérifier</option><option value="missing">Informations manquantes</option><option value="duplicates">Doublons possibles</option><option value="sources">Citations de sources</option></select></label><label>Rechercher<input type="search" id="review-query" placeholder="Nom ou contenu du signalement"></label><label>Périmètre<select id="review-branch"><option value="">Tout l’arbre</option><option value="ancestors">Ascendants de la référence</option><option value="descendants">Descendants de la référence</option></select></label></div>
+    <p id="review-reference" class="search-note"></p><p id="review-count" role="status"></p><div id="review-results"></div><button id="review-more" type="button" class="outline-button" hidden>Afficher les signalements suivants</button>
+    <p class="search-note">Les intervalles de dates sont respectés ; « vers », « estimé » et « calculé » prennent une marge de deux ans pour ce contrôle. Une absence de décès ne signifie pas que la personne est vivante. La détection des doublons est volontairement limitée aux concordances fortes et n’est pas exhaustive.</p>
   </dialog>
   <dialog id="kinship-dialog" aria-labelledby="kinship-title">
     <div class="search-dialog-heading"><div><p class="eyebrow">Les liens de notre famille</p><h2 id="kinship-title">Comparer deux personnes</h2></div><button type="button" class="icon-button" id="close-kinship" aria-label="Fermer le lien de parenté">×</button></div>

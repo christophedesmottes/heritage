@@ -144,3 +144,13 @@ dialog{overscroll-behavior:contain;scroll-padding-block:16px}
 #notebook-sync-conflicts article { border-top:1px solid var(--line); padding:14px 0; }
 
 #notebook-sync-rotation { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
+
+#review-dialog { width:min(960px,calc(100vw - 48px)); }
+.review-filters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.review-filters label { display:flex; flex-direction:column; gap:8px; }
+.review-filters input,.review-filters select { width:100%; min-width:0; box-sizing:border-box; min-height:44px; padding:10px; border:1px solid var(--line); border-radius:5px; background:var(--panel); color:var(--ink); }
+.review-item { padding:18px 0; border-top:1px solid var(--line); overflow-wrap:anywhere; }
+.review-item h3 { margin:6px 0; }
+.review-people { display:flex; flex-wrap:wrap; gap:8px; }
+.review-people button { white-space:normal; text-align:left; }
+@media(max-width:759px) { .review-filters { grid-template-columns:1fr; } #open-review { min-height:44px; } }

@@ -1,4 +1,4 @@
-// Héritage 0.15.2 — code personnel modifiable, révocation et reprise après interruption ; change this marker with every release.
+// Héritage 0.16.0 — espace À vérifier, contrôles conservateurs et pistes de recherche ; change this marker with every release.
 import { SHELL, SHELL_CACHE, DATA_CACHE, MEDIA_CACHE, resourceType } from './lib/offline-config.js';
 import { runtime } from './runtime-config.js';
 import { accessStore } from './lib/family-session.js';

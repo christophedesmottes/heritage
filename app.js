@@ -1,4 +1,4 @@
-import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds, layoutKinship } from './lib/genealogy.js';
+import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds, layoutKinship, buildReview, filterReview } from './lib/genealogy.js';
 import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
@@ -11,6 +11,7 @@ const viewport = $('#tree-viewport');
 const panel = $('#portrait-panel');
 const dialog = $('#search-dialog');
 const kinshipDialog = $('#kinship-dialog');
+let reviewFindings=null, reviewReference='', reviewLimit=60;
 let kinshipGraph, kinshipFrom = '', kinshipTo = '', searchTarget = 'center', branchReference = '', branchQuery = '';
 const isMobile = () => matchMedia('(max-width:759px)').matches;
 const firstName = p => p.firstName?.split(' ')[0] || p.name;
@@ -459,6 +460,30 @@ $('#zoom-out').addEventListener('click', () => zoomTo(state.zoom - .1));
 $('#zoom-reset').addEventListener('click', () => { zoomTo(1); centerOnSelection(true); });
 $('#fit-tree').addEventListener('click', () => { state.framing = 'overview'; fitTree(); });
 $('#open-search').addEventListener('click', () => openSearch());
+function renderReview() {
+  const category=$('#review-category').value, scope=$('#review-branch').value;
+  const ids=scope ? branchIds(kinshipGraph,reviewReference,scope) : null;
+  const list=filterReview(reviewFindings,state.data.people,{category,query:$('#review-query').value,ids});
+  const names={dates:'Dates à vérifier',missing:'Informations manquantes',duplicates:'Doublons possibles',sources:'Citations de sources'};
+  const counts=Object.keys(names).map(key=>`${names[key]} : ${reviewFindings.filter(item=>item.category===key).length}`).join(' · ');
+  $('#review-reference').textContent='Référence des branches : '+displayName(state.data.people[reviewReference])+'. Les branches incluent cette personne.';
+  $('#review-count').textContent=`${list.length} signalement(s) correspondant aux filtres · ${Math.min(reviewLimit,list.length)} affiché(s). Dans tout l’export : ${counts}`;
+  $('#review-results').innerHTML=list.length ? list.slice(0,reviewLimit).map(item=>`<article class="review-item"><p class="eyebrow">${names[item.category]}</p><h3>${escape(item.title)}</h3><p>${escape(item.detail)}</p><div class="review-people">${item.ids.slice(0,20).map(id=>{const person=state.data.people[id];return `<button type="button" class="outline-button" data-review-person="${escape(id)}">${escape(displayName(person))} · ${escape(lifeSpan(person))}</button>`;}).join('')}</div>${item.ids.length>20?`<p>Groupe de ${item.ids.length} fiches : les 20 premières sont proposées ici. Retrouvez les autres avec la recherche par nom.</p>`:''}</article>`).join('') : '<p>Aucun signalement ne correspond à ces filtres. Cela ne constitue pas une validation complète de l’arbre.</p>';
+  $('#review-more').hidden=list.length<=reviewLimit;
+}
+$('#open-review').addEventListener('click',()=>{
+  if (!state.data) return;
+  reviewFindings ??= buildReview(state.data); reviewReference=state.selected || state.center; reviewLimit=60;
+  renderReview(); $('#review-dialog').showModal();
+});
+$('#close-review').addEventListener('click',()=>$('#review-dialog').close());
+for (const id of ['review-category','review-query','review-branch']) $('#'+id).addEventListener(id==='review-query'?'input':'change',()=>{reviewLimit=60;renderReview();});
+$('#review-more').addEventListener('click',()=>{reviewLimit+=60;renderReview();});
+$('#review-results').addEventListener('click',event=>{
+  const button=event.target.closest('[data-review-person]'); if(!button) return;
+  $('#review-dialog').close(); recenter(button.dataset.reviewPerson); selectPerson(button.dataset.reviewPerson);
+});
+
 $('#open-kinship').addEventListener('click', () => openKinship());
 $('#close-kinship').addEventListener('click', () => kinshipDialog.close());
 for (const target of ['from', 'to']) $(`#kinship-${target}`).addEventListener('click', () => { kinshipDialog.close(); openSearch(target); });
@@ -578,6 +603,7 @@ async function load() {
     const data = await response.json();
     if (!data.people?.[data.meta?.rootId]) throw new Error('Arbre invalide');
     state.data = data;
+    reviewFindings = null; $('#open-review').disabled = false;
     kinshipGraph = buildKinshipGraph(data);
     state.searchIndex = buildSearchIndex(data.people);
     state.center = state.selected = data.meta.rootId;
