@@ -1,4 +1,4 @@
-import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds, layoutKinship, buildReview, filterReview } from './lib/genealogy.js';
+import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds, layoutKinship, buildReview, filterReview, buildTimeline } from './lib/genealogy.js';
 import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
@@ -59,6 +59,21 @@ function mediaMarkup(person) {
   return `<details class="profile-section media-section"><summary>Photographies · ${media.length}</summary><div class="media-gallery">${media.map((item, index) => `<figure><a href="${escape(mediaSource(item))}" target="_blank" rel="noopener noreferrer" aria-label="Agrandir ${escape(item.title || `la photographie ${index + 1}`)} (nouvel onglet)"><img src="${escape(mediaSource(item))}" alt="${escape(item.title || `Photographie ${index + 1} de ${displayName(person)}`)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.closest('figure').querySelector('.media-unavailable').hidden=false"></a><span class="media-unavailable" hidden>Photographie indisponible</span><figcaption>${escape(item.title || `Photographie ${index + 1}`)}</figcaption></figure>`).join('')}</div><p class="source-note media-note">${allLocal ? (familyMode ? 'Ces photographies proviennent de la bibliothèque familiale privée.' : 'Ces photographies sont conservées sur ce PC.') : 'Certaines photographies nécessitent un accès à leur site d’origine.'} Cliquez sur une image pour l’agrandir.</p></details>`;
 }
 
+function chronologyMarkup(person) {
+  const items=buildTimeline(state.data,person.id),dated=items.filter(item=>item.range),undated=items.filter(item=>!item.range);
+  const rows=list=>list.map(item=>{
+    const e=item.event,label=item.kind==='child'?'Naissance d’un enfant':e.type || EVENT_LABELS[e.tag] || 'Événement';
+    const links=item.relatedIds.map(id=>`<button type="button" class="outline-button chronology-relative" data-relative="${escape(id)}">${escape(displayName(state.data.people[id]))}</button>`).join('');
+    const photos=mediaFor({media:e.media || [],events:[]});
+    const portrait=item.portraitId && portraitFor(state.data.people[item.portraitId]);
+    const images=photos.length?`<div class="chronology-photos">${photos.map(photo=>`<figure><a href="${escape(mediaSource(photo))}" target="_blank" rel="noopener noreferrer"><img src="${escape(mediaSource(photo))}" alt="${escape(photo.title || 'Document rattaché à cet événement')}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.closest('figure').querySelector('figcaption').textContent='Image indisponible'"></a><figcaption>${escape(photo.title || 'Document de l’événement')}</figcaption></figure>`).join('')}</div>`:'';
+    const contextPhoto=portrait?`<figure class="chronology-portrait">${photoMarkup(state.data.people[item.portraitId])}<figcaption>Portrait de ${escape(displayName(state.data.people[item.portraitId]))} · date de la photo non attribuée à cette naissance</figcaption></figure>`:'';
+    const body=eventMarkup(label,e,[e.value==='Y'?'':e.value,item.context].filter(Boolean).join(' · '));
+    return body.replace('</li>',`${links}${images}${contextPhoto}${e.sources?.length?`<details class="chronology-sources"><summary>Sources de cet événement · ${e.sources.length}</summary><ul class="source-list">${sourceMarkup(e.sources)}</ul></details>`:''}</li>`);
+  }).join('');
+  return `<details class="profile-section chronology-section" open><summary>Chronologie · ${countLabel(items.length, 'événement')}</summary><p class="chronology-note">Ordre indicatif lorsque les dates sont approximatives ou se chevauchent. Les documents rattachés à un événement sont distingués des portraits généraux ; aucune date de prise de vue n’est déduite.</p>${dated.length?`<ol class="timeline life-timeline" aria-label="Chronologie datée">${rows(dated)}</ol>`:''}${undated.length?`<h3 class="chronology-undated">Date non précisée ou non classable</h3><ol class="timeline life-timeline" aria-label="Événements sans date classable">${rows(undated)}</ol>`:''}</details>`;
+}
+
 function selectedRelationship() {
   const n = state.layout.nodes.find(n => n.key === state.selectedKey && n.id === state.selected) ?? state.layout.nodes.find(n => n.id === state.selected);
   const p = state.data.people[state.selected], name = firstName(state.data.people[state.center]);
@@ -81,7 +96,7 @@ function renderProfile() {
     for (const e of union.events ?? []) events.push({ ...e, context: `Avec ${familyName(union, p.id)}` });
   }
   events.sort((a, b) => ({ BIRT: -1, DEAT: 1 }[a.tag] || 0) - ({ BIRT: -1, DEAT: 1 }[b.tag] || 0));
-  const citations = [...(p.sources ?? []), ...events.flatMap(e => e.sources ?? [])];
+  const citations = [...(p.sources ?? []), ...events.flatMap(e => e.sources ?? []), ...family.unions.flatMap(f => f.sources ?? [])];
   const notes = [...(p.notes ?? [])];
   const mediaCount = mediaFor(p).length;
   const occupation = personalEvents.filter(e => e.tag === 'OCCU').map(e => e.value).filter(Boolean).join(', ');
@@ -94,11 +109,11 @@ function renderProfile() {
     <button type="button" class="outline-button profile-kinship" data-kinship="${escape(p.id)}">Comparer son lien de parenté</button>
     ${profileTools(p)}
   </div>
-  <details class="profile-section" open><summary>Événements</summary><ol class="timeline" aria-label="Événements de cette vie">${events.map(e => eventMarkup(e.type || EVENT_LABELS[e.tag] || 'Événement', e, [e.value === 'Y' ? '' : e.value, e.context].filter(Boolean).join(' · '))).join('')}</ol></details>
+  ${chronologyMarkup(p)}
   ${summary ? `<details class="profile-section" ${state.view === 'portrait' ? 'open' : ''}><summary>Repères de vie</summary><p class="portrait-story">${escape(summary)}</p></details>` : ''}
   <details class="profile-section" open><summary>Famille immédiate</summary>${family.parentalFamilies.length ? family.parentalFamilies.map(f => { const qualifier = pedigreeLabel(p.parentLinks?.find(link => link.familyId === f.id)?.pedigree); return relativeList(qualifier ? `Parents · ${escape(qualifier)}` : 'Parents', f.parents); }).join('') : relativeList('Parents', p.parents)}${relativeList('Frères et sœurs de la même famille', family.siblings)}${family.unions.map(union => `<div class="union-group"><p class="relative-heading">Famille avec ${escape(familyName(union, p.id))}</p>${relativeList('Conjoint·e / autre parent', union.parents.filter(id => id !== p.id))}${relativeList(countLabel(union.children.length, 'enfant'), union.children)}${union.parents.find(id => id !== p.id && state.data.people[id]) ? `<button type="button" class="outline-button family-open" data-explore="${escape(union.parents.find(id => id !== p.id && state.data.people[id]))}">Explorer cette branche</button>` : ''}</div>`).join('')}${!p.parents.length && !family.unions.length ? '<p class="portrait-story">Aucun proche rattaché dans ce fichier.</p>' : ''}</details>
   ${notes.length ? `<details class="profile-section"><summary>Notes du fichier · ${notes.length}</summary>${notes.map(note => `<p class="imported-text">${escape(note)}</p>`).join('')}</details>` : ''}
-  ${citations.length ? `<details class="profile-section"><summary>Sources des événements et de la personne</summary><ul class="source-list">${sourceMarkup(citations)}</ul></details>` : ''}
+  ${citations.length ? `<details class="profile-section"><summary>Sources des événements, de la personne et des familles</summary><ul class="source-list">${sourceMarkup(citations)}</ul></details>` : ''}
   ${p.relationshipWarnings?.length ? '<p class="source-note">Un lien familial figure dans la fiche de cette personne, mais pas dans l’enregistrement réciproque de la famille. Il est conservé tel que déclaré dans votre export.</p>' : ''}
   ${mediaMarkup(p)}
   <p class="source-note">Export du ${escape(formatDate(state.data.meta.sourceExport))}.<br>Identifiant : ${escape(p.id)}.${mediaCount ? `<br>${countLabel(mediaCount, 'photographie référencée', 'photographies référencées')}` : ''}</p>`;

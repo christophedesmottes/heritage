@@ -154,3 +154,16 @@ dialog{overscroll-behavior:contain;scroll-padding-block:16px}
 .review-people { display:flex; flex-wrap:wrap; gap:8px; }
 .review-people button { white-space:normal; text-align:left; }
 @media(max-width:759px) { .review-filters { grid-template-columns:1fr; } #open-review { min-height:44px; } }
+
+.chronology-note,.chronology-portrait figcaption { font-size:11px; line-height:1.6; color:var(--muted); }
+.chronology-undated { font-size:13px; font-weight:500; margin:20px 0 14px; }
+.chronology-relative { margin:8px 6px 0 0; white-space:normal; overflow-wrap:anywhere; text-align:left; }
+.chronology-sources { margin-top:10px; }
+.chronology-sources summary { min-height:44px; padding:12px 0; font-size:11px; letter-spacing:normal; text-transform:none; }
+.chronology-photos { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:10px; margin-top:12px; }
+.chronology-photos figure,.chronology-portrait { margin:0; }
+.chronology-photos img { width:100%; max-height:180px; object-fit:contain; }
+.chronology-photos figcaption { font-size:11px; overflow-wrap:anywhere; }
+.chronology-portrait { display:flex; gap:10px; align-items:center; margin-top:12px; }
+.chronology-portrait .person-avatar { flex-shrink:0; width:38px; height:38px; }
+.life-timeline>li { overflow-wrap:anywhere; }
