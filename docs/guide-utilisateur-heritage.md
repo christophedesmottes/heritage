@@ -1,6 +1,6 @@
 # Héritage - Guide de la famille
 
-Édition du 3 octobre 2026 · Application 0.17.0
+Édition du 4 octobre 2026 · Application 0.18.0
 
 ## 1. Héritage.
 
@@ -24,7 +24,7 @@ Retrouver les visages, comprendre les liens et conserver ses souvenirs. Ce guide
 
 Vous pouvez lire ce PDF hors connexion, l’imprimer ou utiliser la version HTML du guide. Aucun code privé ne figure dans ce document : demandez le PIN familial au responsable de l’arbre et conservez séparément votre code personnel.
 
-**Édition du 3 octobre 2026 - application 0.17.0.** Le guide décrit cette version. Si une fonction est absente de votre écran, consultez la page 14 : sa disponibilité dépend de la version publiée et de l’activation de la synchronisation par le responsable.
+**Édition du 4 octobre 2026 - application 0.18.0.** Le guide inclut la carte familiale et ses rapprochements de lieux. Si une fonction est absente, consultez la page 14 : sa disponibilité dépend de la version publiée et de l’activation de la synchronisation par le responsable.
 
 ## 2. Se repérer
 
@@ -45,18 +45,21 @@ Choisissez votre parcours
 | Ajouter une icône sur mon appareil | 13 |
 | Mettre l’application à jour | 14 |
 | Résoudre une difficulté et demander de l’aide | 15 |
+| Explorer la carte familiale | 16 |
+| Rapprocher et sauvegarder les lieux | 17 |
 
 ### Les espaces de l’application
 
 - **Vue famille / Famille** : les personnes et leurs liens autour d’une personne centrale.
 - **Ascendance** : une présentation centrée sur les ancêtres.
-- **Portrait** : une lecture plus détaillée de la personne sélectionnée.
-- **Parenté** : la comparaison de deux personnes et le chemin qui les relie.
-- **À vérifier** : des points du dossier généalogique à examiner.
-- **Carnet** : vos favoris, vos notes, les sauvegardes et les réglages personnels.
+- **Portrait** : une lecture détaillée, la chronologie et les sources.
+- **Parenté** : deux personnes et le chemin qui les relie.
+- **À vérifier** : des pistes à examiner dans le dossier.
+- **Carte** : les lieux des événements et leurs variantes.
+- **Carnet** : notes, favoris, sauvegardes et réglages personnels.
+- **? Aide** : ce guide en nouvel onglet ; il est aussi accessible sous le formulaire du PIN.
 
-> **Une présentation adaptée à l’écran**
-> Sur un petit écran, certaines commandes sont regroupées et la fiche peut s’ouvrir sous forme de panneau. Faites défiler ce panneau pour lire la suite ; utilisez sa croix de fermeture pour retrouver davantage de place pour l’arbre.
+Sur petit écran, faites défiler la fiche et fermez-la avec sa croix pour retrouver l’arbre. Le guide en ligne nécessite Internet ; conservez le PDF pour le lire hors connexion.
 
 ## 3. Naviguer dans l’arbre
 
@@ -433,3 +436,60 @@ Contactez la personne qui vous a transmis le lien. Indiquez votre appareil, le n
 
 > **Votre aide fait vivre l’arbre**
 > Pour une question généalogique, précisez la personne et les dates concernées, puis joignez séparément les sources ou photos utiles. Le Carnet est votre espace personnel : il n’envoie pas vos remarques aux autres membres de la famille.
+
+## 16. Explorer la carte familiale
+
+Naissances, unions et lieux de vie
+
+1. Sélectionnez une personne dans l’arbre ou la recherche, puis ouvrez **Carte**.
+2. Choisissez le périmètre : cette personne, ses ascendants, ses descendants ou tout l’arbre.
+3. Filtrez par événement, années et nom ou lieu, selon votre recherche.
+4. Touchez un point ou un lieu dans la liste : les personnes, dates et lieux originaux apparaissent. Un bouton de personne ouvre sa fiche.
+
+### Choisir ce que montre la carte
+
+La personne sélectionnée à l’ouverture reste la **référence**. Pour la changer, fermez la carte, sélectionnez une autre personne et rouvrez Carte. Les branches incluent la référence. Naissances, mariages, résidences, immigrations, émigrations et décès sont proposés ; un mariage est compté une fois pour ses partenaires.
+
+Les points regroupent les événements rapprochés vers une même localité. Le compteur distingue les événements localisés, les écritures à vérifier et les événements sans lieu. Une période exclut les dates inconnues ; les intervalles connus sont comparés à cette période. **Afficher tous les lieux** poursuit la liste ; affinez les filtres si un lieu compte plus de 80 événements.
+
+### Déplacer et zoomer
+
+Sur PC : tournez la molette pour zoomer et maintenez le clic gauche pour déplacer. Sur iPhone/iPad : glissez ou pincez à deux doigts. **+**, **-** et **Tout voir** sont aussi disponibles. Changer un filtre garde le cadrage ; Tout voir recadre les lieux du périmètre. Le zoom de cette carte est indépendant de celui de l’arbre.
+
+> **Des lieux attestés, pas un itinéraire**
+> **Relier les lieux de la référence** relie ses événements datés et localisés. Ces traits ne donnent ni une route ni une date de voyage. Les dates incertaines, inconnues ou dans la même année ne sont pas reliées avec certitude. La naissance d’un enfant ne place pas automatiquement son parent dans cette ville. **Lieux datés** donne la liste des observations.
+
+### Si la carte est vide ou incomplète
+
+Ouvrez **Rapprocher les lieux et confirmer les variantes** : une écriture ambiguë ou absente du référentiel reste à vérifier (page 17). Les coordonnées représentent des centres de localités, pas une adresse ou le lieu exact d’une cérémonie. Le fond simplifié ne montre pas les rues.
+
+La carte utilise un référentiel local, sans envoyer les lieux familiaux à un service de géolocalisation. Après la mise à jour complète et l’ouverture de l’arbre, elle est utilisable hors connexion tant que l’accès familial reste valide. Elle ne prolonge pas cet accès.
+
+## 17. Rapprocher et conserver les lieux
+
+Confirmer les variantes sans modifier le dossier
+
+Dans **Carte**, ouvrez **Rapprocher les lieux et confirmer les variantes**. Les écritures sont comparées sans modifier le GEDCOM. Les variantes confirmées vers une même commune partagent un point.
+
+1. Choisissez une écriture. Examinez la commune proposée, son contexte administratif, son pays et ses coordonnées.
+2. Cherchez au besoin une commune avec son code pays : **FR**, **BE**, **US**… Précisez le nom si la liste est longue.
+3. Vérifiez vos sources, puis choisissez **Confirmer ce lieu**. Une proposition n’est pas une preuve.
+4. Utilisez **Écarter de la carte** si le lieu reste indéterminé. Pour revenir sur un choix, cochez **Inclure les lieux déjà rapprochés ou écartés**, puis **Annuler mon choix**.
+
+> **Attention aux homonymes**
+> Un choix vaut pour les événements portant cette même écriture normalisée dans l’arbre. « Givry », par exemple, peut désigner plusieurs communes : vérifiez que votre choix convient à tous les événements concernés. Un nom de pays seul n’est pas placé au centre du pays.
+
+### Pourquoi certains lieux manquent-ils ?
+
+Le référentiel couvre les communes françaises actuelles, les localités belges et une sélection mondiale. Hameaux et lieux historiques peuvent manquer. Un code postal non vérifiable ou un contexte contradictoire demande une confirmation. Signalez au responsable les localités absentes.
+
+### Sauvegarder et transférer vos confirmations
+
+1. Utilisez **Exporter mes rapprochements** et conservez le fichier dans un endroit privé.
+2. Sur un autre appareil, ouvrez Carte puis **Importer des rapprochements** et choisissez ce fichier.
+3. Lisez le nombre de choix, puis cliquez **Confirmer l’import**. Les choix pour les mêmes écritures sont remplacés ; les autres sont conservés. Exportez vos choix actuels avant l’import.
+
+Un fichier invalide est entièrement refusé. La sauvegarde contient des lieux, sans personnes ni événements : gardez-la privée.
+
+> **Ces choix sont distincts du Carnet**
+> Ils restent dans ce navigateur et ne sont pas synchronisés avec votre PIN personnel. Effacer les données du navigateur les efface aussi. Ils sont réutilisés lors d’un nouvel export pour les mêmes écritures, même si les identifiants des personnes changent. Une nouvelle écriture peut demander un nouveau choix. Notes, favoris et généalogie ne sont jamais modifiés par un rapprochement.
