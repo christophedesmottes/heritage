@@ -1,6 +1,6 @@
 # Héritage - Guide de la famille
 
-Édition du 4 octobre 2026 · Application 0.18.1
+Édition du 4 octobre 2026 · Application 0.18.2
 
 ## 1. Héritage.
 
@@ -24,7 +24,7 @@ Retrouver les visages, comprendre les liens et conserver ses souvenirs. Ce guide
 
 Vous pouvez lire ce PDF hors connexion, l’imprimer ou utiliser la version HTML du guide. Aucun code privé ne figure dans ce document : demandez le PIN familial au responsable de l’arbre et conservez séparément votre code personnel.
 
-**Édition du 4 octobre 2026 - application 0.18.1.** Le guide inclut la carte familiale et ses rapprochements de lieux. Si une fonction est absente, consultez la page 14 : sa disponibilité dépend de la version publiée et de l’activation de la synchronisation par le responsable.
+**Édition du 4 octobre 2026 - application 0.18.2.** Le guide inclut la carte familiale et ses rapprochements de lieux. Si une fonction est absente, consultez la page 14 : sa disponibilité dépend de la version publiée et de l’activation de la synchronisation par le responsable.
 
 ## 2. Se repérer
 
@@ -79,7 +79,7 @@ Sélectionner une carte ouvre sa fiche. Pour construire l’affichage autour de 
 
 ### Ancêtres, descendants et fratrie
 
-- Choisissez la profondeur des **Ancêtres** et des **Descendants** : les niveaux proposés vont de 1 à 9 générations (3 par défaut). À partir de 500 cartes, un avertissement conseille de réduire la profondeur ou de désactiver Fratrie.
+- Choisissez la profondeur des **Ancêtres** et des **Descendants** : les niveaux proposés vont de 1 à 20 générations pour les ancêtres, de 1 à 9 pour les descendants (3 par défaut). Seules les générations connues dans le dossier sont affichées. À partir de 500 cartes, un avertissement conseille de réduire la profondeur ou de désactiver Fratrie.
 - Cochez **Fratrie** pour afficher les frères et sœurs dans les branches concernées, ainsi que les conjoints lorsque les liens sont connus.
 - Changer une profondeur ou cocher/décocher **Fratrie** conserve le zoom et le cadrage que vous avez choisis, sur PC comme sur appareil tactile.
 - Les petits repères gris signalent des branches à explorer. Ils ne signifient pas qu’une personne est décédée ou qu’une donnée est erronée.
