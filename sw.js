@@ -1,4 +1,4 @@
-// Héritage 0.18.0 — carte locale des lieux familiaux et rapprochements ; change this marker with every release.
+// Héritage 0.18.1 — arbre jusqu’à neuf générations, cadrage conservé ; change this marker with every release.
 import { SHELL, SHELL_CACHE, DATA_CACHE, MEDIA_CACHE, resourceType } from './lib/offline-config.js';
 import { runtime } from './runtime-config.js';
 import { accessStore } from './lib/family-session.js';

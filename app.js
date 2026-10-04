@@ -1,5 +1,5 @@
 import { familyView, formatDate, lifeSpan, relationship, buildSearchIndex, queryIndex, buildKinshipGraph, findKinship, branchIds, layoutKinship, buildReview, filterReview, buildTimeline } from './lib/genealogy.js';
-import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
+import { CARD, MIN_ZOOM, DEPTHS, savedDepth, treeVolumeWarning, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveTreeFrame } from './lib/tree-layout.js';
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
 import { familyMode, initializeFamilyAccess, requestFamilyCode, lockFamily } from './lib/family-ui.js';
@@ -127,10 +127,11 @@ function renderFamilyChoices() {
   const layout = state.layout;
   const p = state.data.people[state.center];
   const parentPicker = layout.parentalFamilies.length > 1 ? `<label>Parents affichés<select id="parent-choice" aria-label="Choisir une famille parentale">${layout.parentalFamilies.map(f => { const pedigree = p.parentLinks?.find(l => l.familyId === f.id)?.pedigree; return `<option value="${escape(f.id)}" ${f.id === layout.parentFamilyId ? 'selected' : ''}>${escape(f.parents.map(id => state.data.people[id]?.name).join(' et '))}${pedigree ? ` · ${escape(pedigreeLabel(pedigree))}` : ''}</option>`; }).join('')}</select></label>` : '';
-  const depthPicker = `<label class="depth-choice">Ancêtres<select id="depth-choice" aria-label="Nombre de générations d’ancêtres" title="1 : parents · 2 : grands-parents · 3 : arrière-grands-parents">${[1, 2, 3, 4, 5].map(depth => `<option value="${depth}" ${depth === state.ancestorDepth ? 'selected' : ''}>${depth} génération${depth > 1 ? 's' : ''}</option>`).join('')}</select></label>`;
+  const depthPicker = `<label class="depth-choice">Ancêtres<select id="depth-choice" aria-label="Nombre de générations d’ancêtres" title="1 : parents · 2 : grands-parents · 3 : arrière-grands-parents · jusqu’à 9 générations">${DEPTHS.map(depth => `<option value="${depth}" ${depth === state.ancestorDepth ? 'selected' : ''}>${depth} génération${depth > 1 ? 's' : ''}</option>`).join('')}</select></label>`;
   const siblingsPicker = `<label class="siblings-choice" title="Fratrie et conjoints de la personne centrale et de chaque ancêtre affiché"><input id="siblings-choice" type="checkbox" aria-label="Afficher les frères et sœurs" ${state.showSiblings ? 'checked' : ''} ${state.scope === 'parents' ? 'disabled' : ''}>Fratrie</label>`;
-  const descendantsPicker = `<label class="depth-choice">Descendants<select id="descendant-choice" aria-label="Nombre de générations de descendants" ${state.scope === 'parents' ? 'disabled' : ''}>${[1,2,3,4,5].map(depth=>`<option value="${depth}" ${depth===state.descendantDepth?'selected':''}>${depth} génération${depth>1?'s':''}</option>`).join('')}</select></label>`;
-  $('#family-choices').innerHTML = parentPicker + depthPicker + descendantsPicker + siblingsPicker;
+  const descendantsPicker = `<label class="depth-choice">Descendants<select id="descendant-choice" aria-label="Nombre de générations de descendants" ${state.scope === 'parents' ? 'disabled' : ''}>${DEPTHS.map(depth=>`<option value="${depth}" ${depth===state.descendantDepth?'selected':''}>${depth} génération${depth>1?'s':''}</option>`).join('')}</select></label>`;
+  const warning = treeVolumeWarning(state.layout);
+  $('#family-choices').innerHTML = parentPicker + depthPicker + descendantsPicker + siblingsPicker + (warning ? `<p class="tree-volume-warning" role="status">${escape(warning)}</p>` : '');
   $('#family-choices').hidden = false;
 }
 
@@ -202,7 +203,7 @@ function updateZoom() {
   $('#tree-stage').style.left = `${viewport.clientWidth / 2}px`;
   $('#tree-stage').style.top = `${viewport.clientHeight / 2}px`;
   $('#tree-stage').style.transform = `scale(${state.zoom})`;
-  $('#zoom-reset').textContent = `${Math.round(state.zoom * 100)} %`;
+  $('#zoom-reset').textContent = `${(state.zoom * 100).toLocaleString('fr',{maximumFractionDigits:state.zoom<.1?1:0})} %`;
   $('#zoom-out').disabled = state.zoom <= MIN_ZOOM;
   $('#zoom-in').disabled = state.zoom >= 1.6;
 }
@@ -627,8 +628,8 @@ async function load() {
     if (saved && data.people[saved.center]) {
       state.center = saved.center;
       state.selected = data.people[saved.selected] ? saved.selected : saved.center;
-      state.ancestorDepth = [1, 2, 3, 4, 5].includes(saved.ancestorDepth) ? saved.ancestorDepth : 3;
-      state.descendantDepth = [1,2,3,4,5].includes(saved.descendantDepth) ? saved.descendantDepth : 3;
+      state.ancestorDepth = savedDepth(saved.ancestorDepth);
+      state.descendantDepth = savedDepth(saved.descendantDepth);
       state.showSiblings = saved.showSiblings !== false;
       state.scope = saved.scope === 'parents' ? 'parents' : 'all';
       state.parentFamilyId = typeof saved.parentFamilyId === 'string' ? saved.parentFamilyId : '';

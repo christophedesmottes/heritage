@@ -51,4 +51,4 @@ Sources publiques : [API Découpage administratif](https://geo.api.gouv.fr/decou
 - Sur iPhone et iPad réels : vérifier pincement, glissement, rotation, formulaires et mode avion après mise à jour complète.
 - Une fois l’accès familial fermé ou expiré, la carte ne doit pas permettre de consulter l’arbre.
 
-Cette livraison ne demande aucun nouveau script Supabase. Les anciens scripts de synchronisation restent nécessaires uniquement s’ils n’ont pas été installés. Le guide utilisateur complet existant n’a pas été régénéré dans ce lot ; ce document décrit la nouvelle fonction.
+Cette livraison ne demande aucun nouveau script Supabase. Les anciens scripts de synchronisation restent nécessaires uniquement s’ils n’ont pas été installés. Le guide utilisateur complet a également été actualisé pour 0.18.0 ; ses pages 16 et 17 décrivent la carte et les rapprochements.
