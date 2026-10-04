@@ -12,6 +12,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="family.css">
+  <link rel="stylesheet" href="map.css">
   <script type="module" src="app.js"></script>
 </head>
 <body data-view="tree" data-panel="open">
@@ -49,6 +50,7 @@
           <button class="search-trigger" type="button" id="open-search" aria-label="Rechercher une personne"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Rechercher une personne…</span><kbd aria-hidden="true">/</kbd></button>
           <button type="button" class="outline-button kinship-trigger" id="open-kinship">Parenté</button>
           <button type="button" id="open-review" class="outline-button" disabled>À vérifier</button>
+          <button type="button" id="open-map" class="outline-button" disabled>Carte</button>
         </div>
         <div id="family-choices" class="family-choices" hidden></div>
         <div class="canvas-area">
@@ -62,6 +64,39 @@
     </div>
   </main>
   <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+  <dialog id="map-dialog" aria-labelledby="map-title">
+    <div class="search-dialog-heading"><div><p class="eyebrow">Les lieux de notre histoire</p><h2 id="map-title">Carte familiale</h2></div><button type="button" class="icon-button" id="close-map" aria-label="Fermer la carte">×</button></div>
+    <p id="map-message" role="status" aria-live="polite"></p>
+    <div id="map-content" hidden>
+      <p id="map-reference" class="map-note"></p>
+      <div class="map-filters">
+        <label>Périmètre<select id="map-scope"><option value="person">Personne de référence</option><option value="ancestors">Ses ascendants</option><option value="descendants">Ses descendants</option><option value="all">Tout l’arbre</option></select></label>
+        <label>Événement<select id="map-event"><option value="">Tous les événements</option><option value="BIRT">Naissances</option><option value="MARR">Mariages</option><option value="RESI">Résidences</option><option value="IMMI">Immigrations</option><option value="EMIG">Émigrations</option><option value="DEAT">Décès</option></select></label>
+        <label>Depuis l’année<input id="map-from" type="number" min="1" max="9999" placeholder="1900"></label>
+        <label>Jusqu’à l’année<input id="map-to" type="number" min="1" max="9999" placeholder="1950"></label>
+        <label>Nom ou lieu<input id="map-query" type="search" placeholder="Personne, commune, pays…"></label>
+      </div>
+      <p id="map-count" role="status"></p>
+      <div class="map-grid"><div>
+        <div class="map-chart"><div class="map-tools"><button id="map-zoom-out" type="button" class="outline-button" aria-label="Réduire la carte">−</button><span id="map-zoom-value">100 %</span><button id="map-zoom-in" type="button" class="outline-button" aria-label="Agrandir la carte">+</button><button id="map-fit" type="button" class="outline-button">Tout voir</button><label><input id="map-route" type="checkbox" checked> Relier les lieux de la référence</label></div><svg id="family-map" viewBox="-180 -85 360 170" role="group" aria-label="Carte des lieux familiaux. Molette ou pincement pour zoomer, glisser pour déplacer."></svg></div>
+        <p class="map-note">Molette ou pincement pour zoomer ; glissez pour déplacer. Les points regroupent les événements d’un même lieu. La liste permet aussi d’ouvrir chaque lieu au clavier.</p>
+        <p id="map-route-note" class="map-note"></p>
+        <details><summary id="map-route-title">Lieux datés de la référence</summary><ol id="map-route-events"></ol></details>
+      </div><aside class="map-sidebar" aria-label="Lieux et événements"><div id="map-detail"></div><h3>Lieux localisés</h3><div id="map-place-list"></div><button id="map-place-more" class="outline-button" type="button" hidden>Afficher tous les lieux</button></aside></div>
+      <details class="usage-guide" id="map-review"><summary>Rapprocher les lieux et confirmer les variantes</summary>
+        <p class="map-note">Un nom ambigu n’est pas placé automatiquement. Un pays seul ne donne pas une localisation précise. Le référentiel couvre les communes françaises actuelles, les localités belges et une sélection mondiale ; les anciens lieux et les petits villages peuvent manquer. Les noms originaux restent conservés dans l’export.</p>
+        <div class="map-review-tools"><input id="map-review-query" type="search" aria-label="Filtrer les écritures de lieux" placeholder="Chercher une écriture…"><label><input id="map-review-all" type="checkbox"> Inclure les lieux déjà rapprochés ou écartés</label></div>
+        <p id="map-review-count" class="map-note"></p>
+        <div class="map-review-columns"><div><div id="map-review-list"></div><button id="map-review-more" class="outline-button" type="button" hidden>Afficher les écritures suivantes</button></div><div><div id="map-review-detail"></div>
+          <form id="map-find-place" class="map-catalog-search"><label>Commune à rechercher<input id="map-city-query" type="search" placeholder="Nom de la commune"></label><label>Pays (code)<input id="map-country-query" type="text" maxlength="2" placeholder="FR, BE, US…" autocapitalize="characters"></label><button class="outline-button" type="submit">Rechercher</button></form>
+        </div></div>
+        <div class="map-backups"><button id="map-export" class="outline-button" type="button">Exporter mes rapprochements</button><label class="outline-button">Importer des rapprochements<input id="map-import" type="file" accept="application/json,.json" class="sr-only"></label><button id="map-import-confirm" class="outline-button" type="button" hidden>Confirmer l’import</button></div>
+        <p class="map-note">Vos choix sont conservés dans ce navigateur et réutilisés pour les mêmes écritures lors des prochains imports. Ils ne sont pas synchronisés avec le Carnet. Exportez ce fichier pour les transférer sur un autre appareil. Une confirmation rapproche les variantes qui désignent le même lieu ; elle ne modifie aucune personne.</p>
+      </details>
+      <footer id="map-attributions"></footer>
+    </div>
+    <button id="map-retry" type="button" class="outline-button">Recharger le référentiel</button>
+  </dialog>
   <dialog id="search-dialog" aria-labelledby="search-title">
     <div class="search-dialog-heading"><div><p class="eyebrow">Dans votre famille</p><h2 id="search-title">Rechercher une personne</h2></div><button type="button" class="icon-button" id="close-search" aria-label="Fermer la recherche">×</button></div>
     <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="search-input" placeholder="Un nom, un lieu, une année…" autocomplete="off" aria-label="Rechercher par prénom, nom, lieu ou année"></label>

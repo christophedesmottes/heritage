@@ -3,6 +3,7 @@ import { CARD, MIN_ZOOM, layoutFamily, fitZoom, zoomScroll, bindPinch, preserveT
 import { mediaFor, mediaSource, portraitFor } from './lib/media.js';
 import { initPersonal, profileTools, rememberNavigation, hasUnsavedNotes } from './lib/personal-ui.js';
 import { familyMode, initializeFamilyAccess, requestFamilyCode, lockFamily } from './lib/family-ui.js';
+import { initMap } from './lib/map-ui.js';
 
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -618,7 +619,7 @@ async function load() {
     const data = await response.json();
     if (!data.people?.[data.meta?.rootId]) throw new Error('Arbre invalide');
     state.data = data;
-    reviewFindings = null; $('#open-review').disabled = false;
+    reviewFindings = null; $('#open-review').disabled = false; $('#open-map').disabled = false;
     kinshipGraph = buildKinshipGraph(data);
     state.searchIndex = buildSearchIndex(data.people);
     state.center = state.selected = data.meta.rootId;
@@ -649,4 +650,5 @@ $('#lock-family').addEventListener('click', async () => {
   $('#lock-family').disabled = true;
   try { await lockFamily(); } catch { $('#lock-family').disabled = false; $('#announcement').textContent = 'La fermeture n’a pas pu être terminée. Réessayez.'; }
 });
+initMap({ getData: () => state.data, getReference: () => state.selected || state.center, navigate: id => { recenter(id); selectPerson(id); } });
 load();
