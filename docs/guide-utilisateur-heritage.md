@@ -1,6 +1,6 @@
 # Héritage - Guide de la famille
 
-Édition du 4 octobre 2026 · Application 0.18.2
+Édition du 14 octobre 2026 · Application 0.18.3
 
 ## 1. Héritage.
 
@@ -24,7 +24,7 @@ Retrouver les visages, comprendre les liens et conserver ses souvenirs. Ce guide
 
 Vous pouvez lire ce PDF hors connexion, l’imprimer ou utiliser la version HTML du guide. Aucun code privé ne figure dans ce document : demandez le PIN familial au responsable de l’arbre et conservez séparément votre code personnel.
 
-**Édition du 4 octobre 2026 - application 0.18.2.** Le guide inclut la carte familiale et ses rapprochements de lieux. Si une fonction est absente, consultez la page 14 : sa disponibilité dépend de la version publiée et de l’activation de la synchronisation par le responsable.
+**Édition du 14 octobre 2026 - application 0.18.3.** Le guide inclut la carte familiale et ses rapprochements de lieux. Si une fonction est absente, consultez la page 14 : sa disponibilité dépend de la version publiée et de l’activation de la synchronisation par le responsable.
 
 ## 2. Se repérer
 
