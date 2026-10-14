@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnostic Héritage</title>
+<style>body{background:#f8f7f1;color:#224838;font:16px/1.6 system-ui;margin:0}main{max-width:760px;margin:30px auto;padding:24px}h1{font:34px Georgia}button{font:inherit;background:#224838;color:white;border:0;border-radius:6px;padding:12px 18px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:white;border:1px solid #d6dfd0;padding:18px}a{color:inherit}</style>
+<main><h1>Diagnostic de l’ouverture</h1><p>Ce contrôle lit la configuration publiée et essaie d’ouvrir l’arbre avec votre accès familial existant. Il ne modifie ni vos notes, ni vos favoris, ni votre accès. Aucun PIN ou jeton n’est affiché.</p>
+<button id="run">Vérifier l’ouverture</button><pre id="result" role="status">Cliquez pour lancer le contrôle. Il peut durer une minute.</pre>
+<p><a href="./update.html">Mettre à jour le programme sans effacer le Carnet</a> · <a href="./">Retour à Héritage</a></p></main>
+<script type="module">
+import {validFamilyConfig,validSession,accessStore} from './lib/family-session.js';
+import {buildKinshipGraph,buildSearchIndex} from './lib/genealogy.js';
+const output=document.querySelector('#result'),button=document.querySelector('#run');
+async function runDiagnosis(){
+ button.disabled=true;let store;
+ const result={diagnostic:'2026-10-14.1'};
+ const show=message=>{output.textContent=message+'\n\n'+JSON.stringify(result,null,2)};
+ try{
+  show('Lecture de la configuration publiée…');
+  const response=await fetch('./runtime-config.js?diagnostic='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error('Configuration publique inaccessible.');
+  const text=await response.text(),match=/export const runtime = (\{[\s\S]*\});?\s*$/.exec(text);
+  if(!match)throw Error('Format de configuration non reconnu.');
+  const config=JSON.parse(match[1]);
+  if(!validFamilyConfig(config))throw Error('Configuration familiale invalide.');
+  result.expectedSourceSha=config.sourceSha;
+  result.expectedStoragePath=config.treeId+'/exports/'+config.sourceSha+'/tree.json';
+  store=await accessStore(config);const session=await store.get();
+  if(!validSession(session,config)){result.status='session_missing';show('Accès familial absent ou expiré dans ce navigateur. Revenez à Héritage et saisissez votre PIN habituel ; relancez ensuite ce contrôle.');return;}
+  show('Lecture privée en cours…');
+  const started=performance.now();
+  const treeResponse=await fetch(config.endpoint+'/tree',{headers:{Authorization:'Bearer '+session.token},cache:'no-store',signal:AbortSignal.timeout(60000)});
+  result.httpStatus=treeResponse.status;
+  if(!treeResponse.ok){
+   result.status=treeResponse.status===401||treeResponse.status===403?'session_refused':'server_read_failed';
+   show(result.status==='session_refused'?'Le serveur refuse la session existante. Revenez à Héritage et renouvelez votre accès avec le PIN habituel.':'Le serveur ne peut pas fournir l’arbre. Vérifiez HERITAGE_SOURCE_SHA puis la présence exacte de tree.json au chemin indiqué ci-dessous, dans le bucket heritage-private.');return;
+  }
+  const data=await treeResponse.json();
+  result.readSeconds=Math.round((performance.now()-started)/100)/10;
+  result.receivedSourceSha=typeof data.meta?.sha256==='string'?data.meta.sha256:'absente';
+  result.people=data.people&&typeof data.people==='object'?Object.keys(data.people).length:0;
+  if(data.meta?.sha256!==config.sourceSha){result.status='export_mismatch';show('L’arbre renvoyé par Supabase ne correspond pas à celui demandé par le site. L’empreinte reçue ci-dessous permet d’identifier cet écart. Vérifiez le secret HERITAGE_SOURCE_SHA et le contenu du tree.json envoyé.');return;}
+  if(!data.people?.[data.meta?.rootId]){result.status='invalid_tree';show('Le fichier reçu ne contient pas une personne d’accueil valide. Remplacez-le par le tree.json de la livraison validée.');return;}
+  result.stage='graph';result.graphPeople=buildKinshipGraph(data).size;
+  result.stage='search';result.searchPeople=buildSearchIndex(data.people).length;
+  result.stage='complete';result.status='tree_read_ok';
+  show('Le nouvel arbre est accessible et ses index sont valides. Si Héritage échoue encore, utilisez le lien de mise à jour ci-dessous puis réessayez. Si le problème persiste, transmettez ce résultat ; ne supprimez pas les données du navigateur.');
+ }catch(error){result.status='diagnostic_error';result.error=error.name==='TimeoutError'?'Délai de lecture dépassé.':error instanceof TypeError?'Erreur réseau ou réponse illisible.':error.message;show('Le contrôle n’a pas abouti. Transmettez le résultat ci-dessous.');}
+ finally{store?.close();button.disabled=false;}
+}
+button.addEventListener('click',runDiagnosis);
+</script></html>
