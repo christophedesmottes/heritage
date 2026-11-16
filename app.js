@@ -242,12 +242,12 @@ function togglePanel(open = !state.panel) {
   else if (isMobile()) $('.portrait-name').focus({ preventScroll: true });
 }
 
-function recenter(personId, parentFamilyId = '') {
+function recenter(personId, parentFamilyId = '', preserveZoom = false) {
   if (!state.data.people[personId]) return;
   if (state.center !== personId || (parentFamilyId && state.parentFamilyId !== parentFamilyId)) state.history.push({ center: state.center, selected: state.selected, scope: state.scope, zoom: state.zoom, parentFamilyId: state.parentFamilyId, ancestorDepth: state.ancestorDepth, descendantDepth: state.descendantDepth, showSiblings: state.showSiblings, framing: state.framing, selectedKey: state.selectedKey });
   // An overview of a very large family should not make the next family unreadable.
-  if (state.zoom < .3) state.zoom = isMobile() ? .9 : 1;
-  Object.assign(state, { center: personId, selected: personId, scope: 'all', view: 'tree', parentFamilyId, selectedKey: '', framing: isMobile() ? 'selection' : 'overview' });
+  if (!preserveZoom && state.zoom < .3) state.zoom = isMobile() ? .9 : 1;
+  Object.assign(state, { center: personId, selected: personId, scope: 'all', view: 'tree', parentFamilyId, selectedKey: '', framing: preserveZoom || isMobile() ? 'selection' : 'overview' });
   if (isMobile()) state.panel = false;
   render({ center: true });
   viewport.focus({ preventScroll: true });
@@ -421,7 +421,7 @@ document.addEventListener('click', event => {
   if (!b || !state.data) return;
   if (b.dataset.person) selectPerson(b.dataset.person, b.dataset.occurrence);
   else if (b.dataset.relative) selectPerson(b.dataset.relative);
-  else if (b.dataset.explore) recenter(b.dataset.explore, b.dataset.parentFamily);
+  else if (b.dataset.explore) recenter(b.dataset.explore, b.dataset.parentFamily, b.classList.contains('branch-toggle'));
   else if (b.dataset.view) changeView(b.dataset.view);
   else if (b.hasAttribute('data-close-profile')) togglePanel(false);
   else if (b.dataset.scope) {

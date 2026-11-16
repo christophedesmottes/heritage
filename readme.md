@@ -1,19 +1,19 @@
 # Héritage — carnet de bord du projet généalogique
 
-> **État au 16 novembre 2026 : livraison locale 0.18.4 prête pour empêcher l’indexation des pages du site et du guide. Consigne noindex/nofollow/noimageindex systématique, aucun robots.txt bloquant ajouté. Téléchargement du guide PDF conservé depuis une page HTML noindex ; anciennes copies PDF/Markdown publiques à retirer selon le LIRE-MOI. 238 tests réussis (187 JavaScript + 51 Python). [Livraison 0.18.4](livraison-0.18.4/LIRE-MOI.md) : 37 fichiers publics, sans données familiales. Le CNAME et le domaine genealogie.cdesmottes.fr sont à conserver. Aucun déploiement distant effectué ni modification Supabase nécessaire.**
+> **État au 16 novembre 2026 : livraison locale 0.18.5 prête. Un clic sur les petits repères gris ouvre la nouvelle famille en conservant exactement le zoom choisi, sur PC et mobile ; la personne est recentrée sans déclencher Voir tout. Retour à la famille précédente couvert par les contrôles. Non-indexation de 0.18.4 conservée. Guide familial actualisé en HTML, PDF et Markdown (17 pages). 241 tests réussis (190 JavaScript + 51 Python). [Livraison 0.18.5](livraison-0.18.5/LIRE-MOI.md), 37 fichiers publics ; aucun déploiement distant ni changement Supabase effectué.**
 >
 > La direction visuelle validée associe **Héritage** et **Constellation**. La cible est une application commune au **PC, à l’iPhone 15 Pro et à l’iPad Pro 11 pouces de 3e génération**, adaptée au portrait et au paysage. La généalogie reste en consultation seule ; les notes personnelles sont conservées séparément du GEDCOM.
 
 | Repère | État documenté |
 |---|---|
-| Version de ce carnet de bord | **0.19.6 — non-indexation du site et du guide** |
+| Version de ce carnet de bord | **0.19.7 — ouverture des branches sans perte de zoom** |
 | Dernière mise à jour | **16/11/2026** |
 | Version de l'application livrée | **0.18.3 préparée à part pour le nouvel export** ; 0.18.2 active en local ; interface GitHub 0.18.3 vérifiée, lecture privée en diagnostic |
 | Nom de travail | **Héritage**, avec la notion d'« Atlas familial » ; nom définitif à confirmer |
 | Données actuelles | **16 262 personnes**, **4 440 familles**, **970 sources**, GEDCOM de **11,36 Mo** ; export du 24/09/2026 |
 | Interface actuelle | `app/`, raccordée aux **16 262 personnes** ; identité Héritage + Constellation et disposition inspirée de MyHeritage |
 | Photographies locales | **1 405 références**, **1 381 ressources**, **1 116 fichiers distincts** après dédoublonnage, **314,71 Mo** |
-| Tests automatisés persistants dans le projet | **238** (187 JavaScript + 51 Python), suite complète exécutée avec les runtimes disponibles, dont rapprochement géographique, homonymes, import de choix, filtres et déplacements ; contrôles navigateur supplémentaires |
+| Tests automatisés persistants dans le projet | **241** (190 JavaScript + 51 Python), suite complète exécutée avec les runtimes disponibles, dont rapprochement géographique, homonymes, import de choix, filtres et déplacements ; contrôles navigateur supplémentaires |
 | Hébergement / base distante / tâche cron | Accès familial Supabase fonctionnel et validation précédente confirmés par l’utilisateur ; version distante non recontrôlée dans ce lot ; migration et fonction de synchronisation prêtes à déployer ; aucune tâche cron configurée |
 | Consigne active | **Reprise autorisée par l’utilisateur le 30/09/2026**, après la pause ; continuer par livraisons locales sans code familial |
 
@@ -21,7 +21,7 @@ Ce fichier est le **carnet de bord officiel du projet**. Il décrit ce qui exist
 
 **Accès rapide :** [ouvrir l’application publiée](https://christophedesmottes.github.io/heritage/), [ouvrir la copie locale PC](http://127.0.0.1:8767/) ou [comparer les cinq formats sur PC](http://127.0.0.1:8767/review.html). Les guides des étapes [1](docs/etape-1-cadrage.md), [2](docs/etape-2-arbre-complet.md) et [3](docs/etape-3-carnet-autonomie.md) gardent l’historique de conception. Sur Apple, utiliser l’adresse publiée. La première ouverture et la préparation nécessitent Internet et un accès familial valide ; le hors connexion doit ensuite être vérifié dans ce même contexte. Le serveur local n’est nécessaire que pour la copie PC.
 
-**Pour continuer maintenant :** publier le contenu de [livraison-0.18.4/github/](livraison-0.18.4/LIRE-MOI.md) à la racine de GitHub en conservant le CNAME. Retirer les anciennes copies PDF/Markdown publiques indiquées dans le LIRE-MOI, sans toucher aux sources locales. Actualiser ensuite le programme et vérifier Version 0.18.4, l’accès familial et le téléchargement du guide. Les moteurs doivent pouvoir explorer les pages pour lire noindex ; la disparition d’anciens résultats dépend de leur prochaine exploration.
+**Pour continuer maintenant :** publier tout le contenu de [livraison-0.18.5/github/](livraison-0.18.5/LIRE-MOI.md), y compris `docs/` et `lib/`, en conservant le CNAME. Actualiser le programme et vérifier Version 0.18.5. Zoomer dans une petite famille puis cliquer sur un repère gris ouvrant une famille plus grande : le pourcentage doit rester identique et la personne être visible. Vérifier la flèche de retour et le bouton Voir tout. Aucun script Supabase nécessaire.
 
 **Comparer les notes depuis 0.8.1 :** **Carnet → Choisir une sauvegarde → Aperçu de la restauration**. Parcourir les différences avec les flèches ; pour chaque note, garder le texte actuel (défaut) ou réunir les deux textes. Cliquer ensuite sur **Restaurer le carnet**, ou **Annuler**. Une identité différente n’est jamais réunie automatiquement. Depuis 0.12.0, les sauvegardes d’exports antérieurs reconnus par le parcours de réimport sont également acceptées. Le fichier choisi reste à conserver, notamment pour les fiches ignorées. [Guide détaillé](docs/etape-3-restauration-carnet.md).
 
@@ -1561,3 +1561,13 @@ Prochaine vérification préparée : `livraison-depannage-2026-10-14/diagnostic-
 - Dernier export réellement mis en service confirmé par l’utilisateur : préparation validée du 14 octobre, `imports/2026-10-14/candidate-valide/` (17 803 personnes). Le corpus local historique dans app/data reste inchangé.
 
 Références officielles : https://developers.google.com/search/docs/crawling-indexing/block-indexing ; https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+
+
+### Livraison du 16 novembre 2026 — 0.18.5 : conserver le zoom à l’ouverture d’une branche
+
+- Retour utilisateur : les petits rectangles gris changent la famille centrale mais provoquent un ajustement global, rendant les grandes familles illisibles.
+- Cause : recenter() choisissait overview sur PC ; frameTree() appelait fitTree(). Une seconde règle relevait aussi les zooms inférieurs à 30 % lors du recentrage.
+- Correction ciblée : le clic sur une branch-toggle active un recentrage de sélection et conserve exactement le zoom, y compris sous 30 %. La personne choisie devient centrale ; les profondeurs et Fratrie sont conservées. Les autres modes de navigation gardent leur comportement existant ; Voir tout reste une action explicite de cadrage global.
+- Trois tests supplémentaires exercent le véritable gestionnaire de clic, recenter() et frameTree() avec des éléments simulés : PC/mobile, plusieurs zooms dont 8 % et 28 %, filiation alternative, flèche de retour et navigation ordinaire. 241 tests automatiques réussis (190 JavaScript + 51 Python). Aucune validation Safari matériel ou navigateur réel n’est revendiquée pour ce lot.
+- Guide HTML/PDF/Markdown actualisé pour 0.18.5 et vérifié sur ses 17 pages. La publication conserve noindex et le téléchargement du PDF depuis une page HTML ; aucune copie PDF/Markdown brute ajoutée au dossier GitHub.
+- Livraison complète : `livraison-0.18.5/github/`, 37 fichiers publics, dont docs/ et lib/. Les données, empreintes, PIN et Carnets restent inchangés ; aucun déploiement distant ni script Supabase. Conserver le CNAME et le domaine actuel.
