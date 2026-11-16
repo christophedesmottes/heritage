@@ -1,37 +1,52 @@
 # Héritage — carnet de bord du projet généalogique
 
-> **État au 1er octobre 2026 : application 0.11.4 inchangée, documentation 0.12.6. Validation globale sur iPhone/iPad réels confirmée par l’utilisateur. Phase active : [hors connexion, mises à jour, fermeture et expiration de l’accès](docs/etape-5-hors-connexion-mises-a-jour.md). 137 tests automatiques réussis ; migration réelle vers la version de test 0.11.4 avec note conservée contrôlée sur PC. Aucun nouveau fichier applicatif à publier ni script Supabase pour ce lot. Résultats hors connexion matériels et expiration naturelle encore attendus.**
+> **État au 16 novembre 2026 : livraison locale 0.18.4 prête pour empêcher l’indexation des pages du site et du guide. Consigne noindex/nofollow/noimageindex systématique, aucun robots.txt bloquant ajouté. Téléchargement du guide PDF conservé depuis une page HTML noindex ; anciennes copies PDF/Markdown publiques à retirer selon le LIRE-MOI. 238 tests réussis (187 JavaScript + 51 Python). [Livraison 0.18.4](livraison-0.18.4/LIRE-MOI.md) : 37 fichiers publics, sans données familiales. Le CNAME et le domaine genealogie.cdesmottes.fr sont à conserver. Aucun déploiement distant effectué ni modification Supabase nécessaire.**
 >
 > La direction visuelle validée associe **Héritage** et **Constellation**. La cible est une application commune au **PC, à l’iPhone 15 Pro et à l’iPad Pro 11 pouces de 3e génération**, adaptée au portrait et au paysage. La généalogie reste en consultation seule ; les notes personnelles sont conservées séparément du GEDCOM.
 
 | Repère | État documenté |
 |---|---|
-| Version de ce carnet de bord | **0.12.6 — validation hors connexion et accès** |
-| Dernière mise à jour | **01/10/2026** |
-| Version de l'application livrée | **0.11.4 locale, publication utilisateur à effectuer** ; dernière version distante contrôlée 0.11.1 ; synchronisation personnelle non livrée |
+| Version de ce carnet de bord | **0.19.6 — non-indexation du site et du guide** |
+| Dernière mise à jour | **16/11/2026** |
+| Version de l'application livrée | **0.18.3 préparée à part pour le nouvel export** ; 0.18.2 active en local ; interface GitHub 0.18.3 vérifiée, lecture privée en diagnostic |
 | Nom de travail | **Héritage**, avec la notion d'« Atlas familial » ; nom définitif à confirmer |
 | Données actuelles | **16 262 personnes**, **4 440 familles**, **970 sources**, GEDCOM de **11,36 Mo** ; export du 24/09/2026 |
 | Interface actuelle | `app/`, raccordée aux **16 262 personnes** ; identité Héritage + Constellation et disposition inspirée de MyHeritage |
 | Photographies locales | **1 405 références**, **1 381 ressources**, **1 116 fichiers distincts** après dédoublonnage, **314,71 Mo** |
-| Tests automatisés persistants dans le projet | **137** via `npm test` (100 JavaScript + 37 Python) ; limite exacte d’expiration, copies hors connexion, cache plein et migration réelle avec conservation d’une note contrôlés |
-| Hébergement / base distante / tâche cron | GitHub Pages publié en 0.11.1 ; accès familial Supabase fonctionnel confirmé par l’utilisateur après correction des paramètres ; essais matériels et expiration réelle à consigner ; aucune tâche cron configurée |
+| Tests automatisés persistants dans le projet | **238** (187 JavaScript + 51 Python), suite complète exécutée avec les runtimes disponibles, dont rapprochement géographique, homonymes, import de choix, filtres et déplacements ; contrôles navigateur supplémentaires |
+| Hébergement / base distante / tâche cron | Accès familial Supabase fonctionnel et validation précédente confirmés par l’utilisateur ; version distante non recontrôlée dans ce lot ; migration et fonction de synchronisation prêtes à déployer ; aucune tâche cron configurée |
 | Consigne active | **Reprise autorisée par l’utilisateur le 30/09/2026**, après la pause ; continuer par livraisons locales sans code familial |
 
 Ce fichier est le **carnet de bord officiel du projet**. Il décrit ce qui existe, les décisions prises, les propositions et les travaux restant à réaliser. Les anciennes notes restent utiles pour comprendre le cheminement, mais les orientations les plus récentes sont réunies ici. Une nouvelle instruction explicite de l'utilisateur prime sur ce document ; le README doit alors être actualisé.
 
 **Accès rapide :** [ouvrir l’application publiée](https://christophedesmottes.github.io/heritage/), [ouvrir la copie locale PC](http://127.0.0.1:8767/) ou [comparer les cinq formats sur PC](http://127.0.0.1:8767/review.html). Les guides des étapes [1](docs/etape-1-cadrage.md), [2](docs/etape-2-arbre-complet.md) et [3](docs/etape-3-carnet-autonomie.md) gardent l’historique de conception. Sur Apple, utiliser l’adresse publiée. La première ouverture et la préparation nécessitent Internet et un accès familial valide ; le hors connexion doit ensuite être vérifié dans ce même contexte. Le serveur local n’est nécessaire que pour la copie PC.
 
-**Pour continuer maintenant :** suivre la [fiche de validation iPhone/iPad](docs/etape-4-validation-appareils.md) avec [l’application publiée](https://christophedesmottes.github.io/heritage/), dans Safari puis depuis son icône. Le développement local reste disponible [sans code sur le PC](http://127.0.0.1:8767/). Le [guide de sauvegarde complète](docs/etape-3-sauvegarde-complete.md) décrit la création du ZIP local et sa restauration. Les notes sont propres à chaque appareil et contexte : exporter/restaurer le Carnet pour les déplacer. Aucune synchronisation personnelle livrée.
+**Pour continuer maintenant :** publier le contenu de [livraison-0.18.4/github/](livraison-0.18.4/LIRE-MOI.md) à la racine de GitHub en conservant le CNAME. Retirer les anciennes copies PDF/Markdown publiques indiquées dans le LIRE-MOI, sans toucher aux sources locales. Actualiser ensuite le programme et vérifier Version 0.18.4, l’accès familial et le téléchargement du guide. Les moteurs doivent pouvoir explorer les pages pour lire noindex ; la disparition d’anciens résultats dépend de leur prochaine exploration.
 
-**Comparer les notes depuis 0.8.1 :** **Carnet → Choisir une sauvegarde → Aperçu de la restauration**. Parcourir les différences avec les flèches ; pour chaque note, garder le texte actuel (défaut) ou réunir les deux textes. Cliquer ensuite sur **Restaurer le carnet**, ou **Annuler**. Une identité différente n’est jamais réunie automatiquement. Les sauvegardes restent limitées au même export généalogique. Le fichier choisi reste à conserver, notamment pour les fiches ignorées. [Guide détaillé](docs/etape-3-restauration-carnet.md).
+**Comparer les notes depuis 0.8.1 :** **Carnet → Choisir une sauvegarde → Aperçu de la restauration**. Parcourir les différences avec les flèches ; pour chaque note, garder le texte actuel (défaut) ou réunir les deux textes. Cliquer ensuite sur **Restaurer le carnet**, ou **Annuler**. Une identité différente n’est jamais réunie automatiquement. Depuis 0.12.0, les sauvegardes d’exports antérieurs reconnus par le parcours de réimport sont également acceptées. Le fichier choisi reste à conserver, notamment pour les fiches ignorées. [Guide détaillé](docs/etape-3-restauration-carnet.md).
 
 **Constat de reprise :** `package.json` et le cache applicatif annonçaient déjà **0.8.0**, avec **96 tests** (71 JavaScript + 25 Python), alors que ce carnet décrivait 0.7.0 et 91 tests. Les fichiers existants, dont les préparatifs de liens d’essai hébergés, sont conservés. Cette reprise ajoute huit tests de logique et six tests navigateur ; elle ne déduit aucun déploiement distant de la seule présence de ces préparatifs.
 
-**Ordre de travail actuel :** vérifier gestes, rotations, clavier et installation sur iPhone/iPad réels ; contrôler hors connexion, conservation du Carnet, fermeture et expiration de l’accès publié ; corriger les anomalies constatées ; définir puis construire la synchronisation des carnets par utilisateur ; préparer les futurs réimports. Les calculs de parenté, cartes et livrets restent des enrichissements ultérieurs. Les anciennes sections de livraison conservent leur état historique.
+**Ordre de travail actuel :** parenté, recherche détaillée, espace À vérifier, chronologie et carte familiale sont livrés localement. Valider la carte et ses confirmations après publication, recueillir les retours, puis préparer le prochain export lorsqu’il sera fourni. Les essais matériels et hors connexion précédents sont confirmés OK par l’utilisateur ; les ajouts nouveaux restent à essayer sur ses appareils. Les livrets sont un enrichissement ultérieur. Les anciennes sections gardent leur état historique.
+
+## Guide utilisateur à transmettre à la famille
+
+Le [guide PDF de 17 pages](output/pdf/guide-utilisateur-heritage.pdf), la [version HTML](docs/guide-utilisateur-heritage.html) et la [version Markdown](docs/guide-utilisateur-heritage.md) sont actualisés pour **0.18.0**, édition du **4 octobre 2026**. Ils couvrent les fonctions précédentes, le bouton Aide, la carte familiale, ses filtres et liaisons, la confirmation des variantes/homonymes, ainsi que l’export/import des rapprochements locaux séparés du Carnet synchronisé. Aucun code privé ni donnée familiale nominative n’est inclus.
+
+Le [lot du guide à publier](livraison-guide-0.18.0/LIRE-MOI.md) contient sept fichiers à remplacer dans le dossier docs/ du dépôt. Le même lot est inclus dans la livraison complète 0.18.0. L’adresse utilisée par Aide reste inchangée ; le HTML propose maintenant le téléchargement du PDF à conserver hors connexion. Ne pas effacer les autres documents déjà publiés.
+
+**Contrôle du 04/10/2026 :** 17 pages PDF et signets, 15 liens internes de sommaire, titres/renvois cohérents et textes dans les marges. Toutes les pages rendues ont été inspectées. HTML : 17 sections, ancres et fichiers locaux valides. Contrôle conservé dans analysis/guide-0.18.0-validation.json. Générateur commun : scripts/build_user_guide.py. Application inchangée en 0.18.0, 221 tests applicatifs précédents réussis ; aucune nouvelle action Supabase ou publication distante.
+
+Historique des lots précédents :
+
+**Validation de l’accès Aide 0.17.1 (03/10/2026) :** les 211 tests existants réussissent (`analysis/tests-0.17.1.log`). Bouton du guide dans l’en-tête, lien présent avant connexion familiale, guide publié ouvert dans un nouvel onglet, sélection et zoom conservés. Dimensions réellement mesurées : 320×720, 393×852, 834×1194, 1194×834 et 1440×960 ; bouton accessible et aucun débordement horizontal de la page. Contrôle navigateur, sans essai matériel Apple supplémentaire. Captures `test-results/aide-entete-0.17.1.jpg` et `test-results/aide-pin-0.17.1.jpg`. Livraison différentielle : cinq fichiers modifiés, aucun changement Supabase ni guide à republier. Les serveurs temporaires de contrôle sont arrêtés ; la copie habituelle reste sur 8767.
+
+
+**Icône du guide (choix 2 validé) :** livre clair portant le « h », fond vert et détails dorés. [Lot à publier](livraison-guide-icone/LIRE-MOI.md) : cinq fichiers à copier dans le dossier `docs/` du dépôt. SVG pour les navigateurs compatibles, PNG/ICO de secours et icône Apple 180×180. Révision des URL d’icône pour le cache. Générateur de pictogrammes `scripts/build_guide_icons.py`, appelé aussi par le générateur du guide. Les quinze sections du HTML sont conservées ; le PDF et l’application 0.17.1 sont inchangés. Contrôle : quatre références locales valides, tailles raster/ICO vérifiées, SVG identique à la proposition choisie. Aucune publication distante ni action Supabase effectuée.
 
 ## Livraison à publier par l’utilisateur
 
-**Consigne la plus récente :** accès avec PIN familial de quatre chiffres ; push GitHub et actions Supabase réalisés par l’utilisateur. Le [guide de livraison](livraison-0.10.0/LIRE-MOI.md) donne les opérations dans l’ordre. Pousser uniquement le contenu de `livraison-0.10.0/github/`. Les données de `stockage-prive/` vont seulement dans le bucket privé Supabase. La mise en production est désormais préparée, mais n’a pas été exécutée. Le contrôle HTTP du 30 septembre, avant cette livraison, répondait encore 503 « Accès familial non configuré ».
+**Consigne la plus récente :** accès avec PIN familial de quatre chiffres ; push GitHub et actions Supabase réalisés par l’utilisateur. Publier la [livraison complète 0.18.0](livraison-0.18.0/LIRE-MOI.md), qui inclut désormais le guide utilisateur actualisé. Si l’application 0.18.0 est déjà publiée, remplacer seulement les fichiers du [lot du guide](livraison-guide-0.18.0/LIRE-MOI.md) dans docs/, en conservant les autres documents. Aucun nouveau changement Supabase pour ces ajouts ; appliquer les étapes 0.15.2 non encore effectuées pour la synchronisation. L’accès publié et les essais précédents sont confirmés fonctionnels par l’utilisateur. Les données privées et les dossiers de préparation restent hors du dépôt public.
 
 ## Reprise et livraison du 30 septembre
 
@@ -463,7 +478,7 @@ Les neuf personnes utilisées sont :
 
 - Ses parents : **Pierre Desmottes** et **Zoe Elie**.
 - **Martin Desmottes**, né le 2 juillet 1869 à Truttemer-le-Petit, décédé le 30 janvier 1933 à Caen, profession indiquée : comptable.
-- Son épouse **Marie Mathilde Georgina Zoé Delabarre**, née le 2 novembre 1873 à Dieppe, décédée le 19 mars 1949 à Fontainebleau. Mariage indiqué le 5 octobre 1895 à Dieppe.
+- Son épouse **Marie Mathilde Georgina Zoé Delabarre**, née le 2 novembre 1883 à Dieppe, décédée le 19 mars 1949 à Fontainebleau. Mariage indiqué le 5 octobre 1895 à Dieppe.
 - Leurs enfants : **Pierre Louis Marie**, **Agnes Anne Marie**, **Georges**, **Paul** et **Marie Thérèse Desmottes**.
 
 Les orthographes et les incertitudes proviennent de l'export. La naissance de Marie Thérèse n'est pas renseignée ; le décès de Zoe est approximatif. Les textes de présentation utilisent les données disponibles, sans photographie inventée ni validation indépendante des faits.
@@ -528,7 +543,7 @@ npm run verify:media
 
 La récupération est déjà terminée : ces commandes ne sont pas nécessaires pour ouvrir l’application. L’équivalent npm du téléchargement est `npm run download:media -- --source sources/2026-09-24.ged`. Le script réutilise les copies dont la taille et l’empreinte sont correctes. Il ne télécharge que les ressources manquantes ou abîmées ; une URL encore valide est alors nécessaire. Il contrôle le domaine, les redirections, le format réel et la taille, limitée à 25 Mio par image. Les formats pris en charge sont JPEG, PNG, GIF et WebP. Les erreurs sont comptées dans le rapport et font échouer la commande ; les éléments déjà obtenus restent réutilisables.
 
-Pour un **futur export**, conserver d’abord sa copie privée dans `sources/` et un instantané des données préparées avant remplacement. Passer ensuite **le même nouveau chemin** à `download_media.py --source` et à `prepare_tree.py --source`. Le téléchargement prépare les fichiers et le manifeste ; la préparation suivante inscrit leurs associations dans le JSON. Le chemin par défaut reste celui du 24 septembre tant qu’il n’est pas changé explicitement dans le script. Comparer les comptes et identifiants, lancer les contrôles puis actualiser le navigateur. La préparation écrase ses sorties ; elle ne crée pas automatiquement un instantané à chaque import.
+Pour un **futur export**, utiliser désormais `scripts/reimport.py`, qui prépare un dossier séparé et conserve les identités vérifiées. Le parcours historique `download_media.py` puis `prepare_tree.py` ne doit plus servir à remplacer un corpus ; la préparation initiale refuse ce remplacement. Voir le [guide des réimports](docs/etape-6-reimports.md).
 
 Conserver ensemble `sources/`, `app/data/` et `analysis/media-manifest.json` dans une sauvegarde privée du projet. Supprimer les images ou leur manifeste peut empêcher leur réutilisation après expiration des URL. Depuis la version 0.6.0, exporter aussi le Carnet séparément : ses annotations sont dans le navigateur et ne figurent pas dans une copie du dossier du projet. Le script `scripts/restore_private.py` restaure désormais le corpus et une copie de consultation dans un dossier neuf, avec vérification des empreintes ; voir le [guide](docs/etape-3-sauvegarde-restauration.md). L’archive ne contient pas le programme ni le Carnet : conserver aussi le projet et l’export des notes. L’assistant global intégré et la copie externe automatique restent à construire.
 
@@ -721,7 +736,7 @@ La présence d'une base distante ne fournit pas à elle seule une synchronisatio
 - La résolution de deux modifications concurrentes : règles automatiques acceptables ou intervention de l'utilisateur.
 - La distinction entre données importées et annotations propres à l'application.
 
-Les identifiants du fichier actuel constituent un point de départ ; leur stabilité entre les futurs exports doit être contrôlée. La version 0.6.0 vérifie aussi nom et date de naissance avant de rattacher une annotation. Le réimport généalogique reste une préparation par script ; le rapprochement guidé des annotations, la synchronisation et le réexport GEDCOM ne sont pas implémentés. La restauration du carnet fusionne uniquement une sauvegarde du même export et conserve les notes actuelles en cas de conflit.
+Depuis 0.12.0, le réimport par script rapproche les `_UID` MyHeritage uniques, conserve les identifiants Héritage et réserve ceux des personnes absentes. Les corrections vérifiées de nom/naissance conservent les annotations ; les sauvegardes d’exports antérieurs reconnus sont acceptées. Les cas incertains sont examinés dans le bilan de préparation avec décisions explicites par fichier ; il n’existe pas encore d’écran d’administration d’import dans l’application. La synchronisation et le réexport GEDCOM restent à construire.
 
 ### 9.4 Confidentialité et accès
 
@@ -1169,15 +1184,15 @@ Statuts : `Fait` indique une réalisation dans le périmètre décrit ; `En cour
 | T08 — Périmètre du produit | Fixer consultation et annotations des premières versions | Fait | P0 | Consultation d'abord validée ; notes/favoris à l'étape 3 ; édition complète hors première version |
 | T09 — Socle multiplateforme | Interface commune et architecture PWA | En cours | P1 | **0.6.0** : manifeste, icônes, service worker ; hébergement privé et installation sur appareils à valider |
 | T10 — Importeur complet | Préserver événements, sources, notes, médias, dates et filiations complexes | En cours | P1 | **0.3.0** : lecteur UTF-8, corpus complet et enregistrements conservés ; restitution de toutes les balises et réexport à compléter |
-| T11 — Identifiants et réimports | Conserver les annotations lors des changements de corpus | En cours | P1 | **0.6.0** : annotations séparées, contrôle nom/naissance, fiches à vérifier préservées ; rapprochement guidé à concevoir |
+| T11 — Identifiants et réimports | Conserver les annotations lors des changements de corpus | Préparé, nouvel export attendu | P1 | **0.12.0** : UID persistants, réservations, aliases vérifiés, anciens carnets restaurables, préparation séparée avec bilan ; contrôle du prochain export restant |
 | T12 — Performances sur le vrai arbre | Indexation, affichage local et mesures sur les appareils | En cours | P1 | **0.5.3** : 48 786 vues aux profondeurs 1/3/5, 77 cartes au plus ; images locales ; mémoire et appareils physiques à tester |
 | T13 — Stockage local | Organiser carnet, navigation et copies hors connexion | Fait | P1 | **0.6.0** : IndexedDB version 1, transactions ; Cache Storage pour interface/arbre/images ; données propres à l’origine |
 | T14 — Installation et cache PWA | Manifeste, service worker, HTTPS et mises à jour | En cours | P1 | **0.6.0** : socle, cache et activation explicite ; HTTPS privé et validation de l’installation Apple restent ouverts |
 | T15 — Hébergement de l'interface | Choisir le fournisseur et le dépôt de code | Fait | P0 | GitHub Pages publié par l’utilisateur ; fichiers publics de navigation/zoom/service worker 0.11.1 contrôlés le 01/10 |
 | T16 — Stockage central | Raccorder le projet Supabase existant | Fait | P0 | Arbre et médias privés raccordés ; accès confirmé fonctionnel par l’utilisateur après correction des paramètres serveur |
-| T17 — Modèle hybride Supabase | Données dans Storage, annotations dans Postgres | En cours | P1 | Consultation privée en service ; notes locales ; synchronisation personnelle non livrée |
+| T17 — Modèle hybride Supabase | Données dans Storage, annotations dans Postgres | En cours | P1 | Consultation privée en service ; synchronisation personnelle 0.15.0 prête, installation Supabase à effectuer |
 | T18 — Authentification et droits | Accès familial par code, données privées côté serveur | En cours | P0 avant production | PIN à quatre chiffres en service, accès confirmé par l’utilisateur ; fermeture, cache et expiration réelle à valider sur appareils |
-| T19 — Synchronisation | Versions, écritures en attente, reconnexion et conflits entre appareils | En cours | P1 | Contrat serveur préparé : révisions et suppressions ; client de synchronisation à construire |
+| T19 — Synchronisation | Versions, écritures en attente, reconnexion et conflits entre appareils | Développé, à déployer et valider | P1 | **0.15.0** : code personnel, révisions CAS, rapprochement à trois versions, suppressions, pause et choix explicites ; installation Supabase et tests réels à effectuer |
 | T20 — Sauvegarde et restauration | Conserver original, annotations et médias | En cours | P1 | **0.9.0** : ZIP complet autonome et restauration validés, guide livré ; copie sur support externe à effectuer |
 | T21 — Inventaire et récupération des médias | Vérifier accès, doublons, formats et tailles ; conserver les images | Fait | P1 | **0.5.3**, export actuel : 1 405 références, 1 381 ressources, 1 116 fichiers vérifiés, 314,71 Mo ; résolutions fournies conservées |
 | T22 — Conservation et cache des médias | Conserver les images sur le PC et dans le navigateur | Fait | P2 | **0.6.0** : cache progressif après préparation, bibliothèque complète sur demande, arrêt/reprise ; appareils physiques à valider |
@@ -1185,7 +1200,7 @@ Statuts : `Fait` indique une réalisation dans le périmètre décrit ; `En cour
 | T24 — Dimensionnement gratuit | Vérifier quotas et mesurer base, fichiers et transfert réel | En cours | P1 | 26/09 : environ 349 Mo de fichiers privés pour cet export ; offre gratuite consultée, stockage du projet existant et trafic à mesurer |
 | T25 — Contrôle de disponibilité | Endpoint avec petite lecture réelle de la base et résultat d'échec exploitable | À faire | P2 | Si Supabase gratuit retenu ; rien de développé |
 | T26 — Cron externe | Configurer contrôle et alerte via cron-job.org avec accès limité | À arbitrer | P2 | Exemple : toutes les 6 h ; ne garantit pas l'absence de pause |
-| T27 — Tests automatisés | Import, carnet, hors connexion, accès, paquet et restauration | En cours | P1 | Dernier résultat **127 réussis** : 90 JavaScript + 37 Python ; essais distants et appareils physiques ouverts |
+| T27 — Tests automatisés | Import, carnet, hors connexion, accès, paquet et restauration | En cours | P1 | Dernier résultat **188 réussis** : 140 JavaScript + 48 Python ; essais distants et appareils physiques ouverts |
 | T28 — Validation des appareils | Tester vrai PC, iPhone 15 Pro et iPad Pro, orientations et installation | En cours | P1 | 01/10 : validation globale de l’usage iPhone/iPad confirmée par l’utilisateur après correctifs ; versions OS et détails non fournis ; validation hors connexion, mises à jour et accès encore ouverte |
 | T29 — Documentation d’exploitation | Configuration, consultation et reprise | En cours | P2 | Doc **0.10.1**, guide complet de sauvegarde/reprise livré ; exploitation distante à finaliser |
 | T30 — Tauri / SQLite | Conserver la piste d'une distribution Windows spécifique si elle redevient utile | Moyen terme | P3 | Proposition initiale, remplacée comme priorité par la cible PWA commune |
@@ -1218,7 +1233,7 @@ Dans ce projet, « gameplay » désigne les **parcours de consultation, d'explor
 | U06 — Périmètre familial | Basculer entre Famille et Ascendance | Fait | P1 | **0.11.1** : ancêtres et descendants sur 1–5 générations ; fratrie et conjoints des ancêtres affichés ; conservation du zoom au changement de profondeur |
 | U07 — Recherche et filtre illustratifs | Rechercher dans l'extrait ; conserver l'exemple de filtre des manques | Fait | P1 | Recherche des 9 personnes dans le prototype **0.1.0** ; filtre de naissance manquante dans l'archive Atelier |
 | U08 — Arbre complet navigable | Recentrer et parcourir proches, ascendants et descendants | Fait | P1 | **0.3.0**, corpus entier ; groupes séparés accessibles par recherche ; exploration par recentrage |
-| U09 — Recherche globale | Trouver personnes et branches dans tout le corpus | Fait | P1 | **0.3.0**, noms/variantes, lieux, années et identifiants ; accents tolérés, résultats par 60, homonymes conservés |
+| U09 — Recherche globale | Trouver personnes et branches dans tout le corpus | Fait | P1 | **0.13.0** : filtres combinés naissance/décès, période, tous lieux d’événements, ascendants/descendants d’une référence choisie ; résultats par 60, homonymes conservés |
 | U10 — Portraits complets | Présenter événements, lieux, unions, sources et documents accessibles | En cours | P1 | **0.5.3** : événements, adresses, notes, sources et photos consultables ; restitution exhaustive des balises à enrichir |
 | U11 — Incertitudes visibles | Dates approximatives, informations absentes, qualifications et sources | En cours | P1 | **0.3.0** : décès déclaré sans date, filiations qualifiées et lien non réciproque signalé ; restitutions à enrichir |
 | U12 — Design sur les trois appareils | Adapter écrans et panneaux aux deux orientations | En cours | P1 | **0.3.0**, cinq formats contrôlés avec tout le corpus ; appareils physiques à venir |
@@ -1227,12 +1242,12 @@ Dans ce projet, « gameplay » désigne les **parcours de consultation, d'explor
 | U15 — Import unique puis accès partagé | Se connecter sur chaque appareil et récupérer l'arbre automatiquement | Fait | P1 | Arbre central accessible par l’adresse GitHub Pages et le PIN ; installation et cache Apple à valider |
 | U16 — Consultation hors connexion | Rouvrir l’arbre et les images conservées avec un état de disponibilité | En cours | P2 | **0.6.0** : préparation locale ; cache testé dans le navigateur, essais Apple à venir |
 | U17 — Favoris et reprise | Retrouver personnes et contexte de consultation | Fait | P2 | **0.6.0** : Carnet et IndexedDB, dernière personne et profondeur/fratrie conservées ; historique et zoom non persistés |
-| U18 — Notes personnelles | Annoter les fiches sans modifier le GEDCOM | Fait | P2 | **0.8.1**, comparaison et réunion des notes à la restauration, brouillons et modifications concurrentes protégés ; synchronisation non livrée |
+| U18 — Notes personnelles | Annoter les fiches sans modifier le GEDCOM | Fait | P2 | **0.8.1**, comparaison et réunion des notes à la restauration, brouillons et modifications concurrentes protégés ; synchronisation **0.15.0** prête à installer |
 | U19 — Édition généalogique complète | Modifier personnes, unions et filiations, puis éventuellement réexporter | À éviter pour l'instant | — | Consultation seule réaffirmée le 23/09/2026 ; aucun développement d'édition prévu sans nouvelle demande |
-| U20 — Lien entre deux personnes | Calculer et expliquer parenté, chemin et ancêtre commun | Moyen terme | P2 | Exemple fictif existant ; aucune fonction raccordée au vrai arbre |
+| U20 — Lien entre deux personnes | Calculer et expliquer parenté, chemin et ancêtre commun | Fait | P2 | **0.13.0** : calcul sur tout l’export, ancêtre commun proche, chemin par unions en complément, pedigree affiché, fiches navigables et comparaison inversable ; un chemin présenté parmi les liens possibles |
 | U21 — Exploration temporelle | Choisir une année et explorer événements et contemporains | Moyen terme | P2 | Exemple fictif existant ; incertitudes à traiter |
 | U22 — Carte familiale | Localiser événements et déplacements documentés | Moyen terme | P2 | Dépend de la normalisation et du géocodage des lieux |
-| U23 — Espace de recherche | Manques, incohérences possibles, candidats doublons et faits sans source | Moyen terme | P2 | Inspiration Atelier ; aucun audit généalogique complet réalisé |
+| U23 — Espace de recherche | Manques, incohérences possibles, candidats doublons et faits sans source | Première version livrée | P2 | **0.16.0** : espace À vérifier, quatre catégories, recherche/branches, pagination et fiches ; aucun changement automatique ; contrôle non exhaustif |
 | U24 — Biographies sourcées | Produire des récits de personnes et de couples avec provenance | Moyen terme | P2 | Textes courts présents en maquette ; génération générale à concevoir |
 | U25 — Contexte historique | Éclairer une époque sans attribuer de faits non établis aux ancêtres | Moyen terme | P3 | Sources externes nécessaires ; non implémenté |
 | U26 — Livrets ciblés | Exporter personne, couple, branche, patronyme ou village | Moyen terme | P2 | Aucun générateur PDF ou livre livré |
@@ -1341,3 +1356,208 @@ La [fiche de validation matérielle](docs/etape-4-validation-appareils.md) organ
 Les choix Ancêtres et Descendants ne déclenchent plus la vue d’ensemble. Le zoom, la sélection et la fiche ouverte sont conservés. La carte la plus proche du centre de l’écran et toujours présente dans la nouvelle disposition sert de repère : son déplacement dans le dessin est compensé par le défilement. Chaque occurrence est identifiée par sa clé et son identifiant. Si une carte disparaît lors de la réduction des générations, une carte restante sert de repère. La position est bornée aux limites de défilement. Voir tout reste une action explicite.
 
 Validation : 127 tests réussis (90 JavaScript, 37 Python), journal `analysis/tests-0.11.1.log`. Deux tests couvrent plusieurs zooms, les occurrences répétées, les cartes retirées et les limites. Contrôle navigateur : 100 % conservé après changement des deux sélecteurs ; position du repère inchangée au passage de deux à trois générations descendantes. Livraison `livraison-0.11.1/github/`, 22 fichiers publics sans données privées. Publication GitHub par l’utilisateur ; aucune action Supabase. [Guide 0.11.1](livraison-0.11.1/LIRE-MOI.md).
+
+### Préparation des futurs réimports — 0.12.0, 1er octobre 2026
+
+L’utilisateur confirme que la validation précédente est OK et demande de préparer un nouvel export MyHeritage, avec personnes et photos supplémentaires. Aucun nouvel export n’a encore été fourni. Le corpus actif reste celui du 24 septembre ; aucune action distante effectuée.
+
+`scripts/reimport.py` prépare un dossier séparé, sans écraser une préparation existante. Il vérifie l’ancien GEDCOM, conserve les identifiants Héritage par `_UID` unique ou décision explicite, réécrit les relations et réserve définitivement les identifiants absents. Les anciens libellés vérifiés permettent les corrections de nom/naissance. Les réservations sont portables dans l’arbre privé et un registre complémentaire. Les homonymes et UID ambigus figurent dans le bilan sans association hasardeuse. Les photos vérifiées sont réutilisées ; seules les manquantes sont téléchargées sur demande. Un bilan fournit ajouts, changements, absences, correspondances et médias à envoyer. La préparation initiale refuse désormais le remplacement d’un corpus ; le paquet privé sélectionne son GEDCOM par empreinte, même si d’anciens fichiers sont conservés.
+
+Le Carnet actualise ses libellés dans une transaction IndexedDB, sans toucher au texte, au favori ou à la date de modification. Les fiches absentes restent conservées et exportables. Les sauvegardes d’exports antérieurs reconnus dans la filiation sont acceptées ; les exports étrangers restent refusés. Format de sauvegarde et version IndexedDB inchangés.
+
+Le format JSON du Carnet reste inchangé. Les nouvelles sauvegardes complètes ZIP passent au format 2 pour inclure les fichiers de mise à jour précédemment omis ; les archives de format 1 restent vérifiables. Un test de compatibilité et le contrôle de restauration de ces modules couvrent cette correction. Les 11 scénarios navigateur existants du Carnet passent également.
+
+Validation : **152 tests automatiques réussis** (104 JavaScript + 48 Python), `analysis/tests-0.12.0.log`. Scénario navigateur `tests/reimport-browser.html` réussi : correction d’identité, conservation du texte/favori/date, fiche absente préservée, nouvelle personne isolée, écriture puis réouverture, migration idempotente. Préparation réelle isolée `artifacts/reimport-validation-2026-10-01/` : 16 262 correspondances, 4 440 familles, aucune ambiguïté ni absence, 1 381 ressources réutilisées, 1 116 fichiers distincts, aucun téléchargement. Inventaire privé vérifié ; la préparation n’est pas promue comme nouvel export.
+
+Livraison `livraison-0.12.0/github/`, 24 fichiers publics, aucun changement Supabase pour ce lot. [Guide de publication](livraison-0.12.0/LIRE-MOI.md), [guide des réimports](docs/etape-6-reimports.md). Documentation 0.13.0. Prochaine validation : préparation et examen du nouvel export quand il sera fourni, puis publication coordonnée de son empreinte et de ses données privées par l’utilisateur.
+
+### Parenté et recherche détaillée — 0.13.0, 2 octobre 2026
+
+L’utilisateur préfère commencer par le lien de parenté et la recherche détaillée, avant la synchronisation personnelle. Le nouvel export est annoncé pour dans quelques jours. Ce lot ne remplace aucune donnée et n’effectue aucune action distante.
+
+Le bouton Parenté et l’action de la fiche ouvrent une comparaison de deux personnes choisies par recherche globale. Le calcul parcourt les filiations et unions déclarées, privilégie un ancêtre commun proche pour les filiations, indique les unions directes et recherche un chemin familial si l’ascendance commune n’est pas trouvée. Un chemin est affiché, avec types d’étape, pedigree déclaré, inversion et navigation vers chaque fiche. Les personnes identiques, absentes et les groupes sans chemin ont un résultat explicite. Les liens ne sont pas qualifiés de biologiques par défaut. Les branches et parcours sont bornés par les personnes visitées, y compris en présence de cycles.
+
+La recherche ajoute une période de naissance ou décès, un lieu de n’importe quel événement importé, les ascendants ou descendants d’une référence librement choisie. Les critères sont combinés avant comptage et pagination. Les dates inconnues sont exclues des périodes, les intervalles comparés par recouvrement et les qualificatifs avant/après conservent leurs bornes ; vers/estimées/calculées utilisent l’année déclarée. Les filtres ne modifient pas le dessin ou le zoom. La référence est incluse dans sa branche ; les unions ne sont pas suivies comme filiations.
+
+Validation : **164 tests réussis** (116 JavaScript, 48 Python), `analysis/tests-0.13.0.log`. Douze tests nouveaux couvrent parenté directe/inversée, cousinage, alliances, absence de chemin, adoption, fratrie/demi-fratrie, cycles, branches, périodes incertaines, lieux et pagination combinée. `scripts/check_exploration.mjs` vérifie 100 chemins sur les 16 262 personnes : chaque étape est déclarée et aucun chemin ne répète une personne ; maximum 46 fiches, 6 cibles sans chemin connu. Mesure PC locale : graphe 258 ms, index 265 ms, les 100 comparaisons 1 030 ms ; aucune extrapolation de performance à iOS. Résultat `analysis/exploration-0.13.0.json`.
+
+Scénario intégré `tests/kinship-search-browser.html` : comparaison et inversion, navigation du chemin, annulation, filtres combinés, période invalide, changement de référence et remise à zéro, dialogues sans débordement dans les cinq formats. Les premiers essais ont été interrompus par l’actualisation du service worker de l’origine de test ; cette suite d’interface désactive désormais les mises à jour uniquement dans son contexte fictif. Les mises à jour restent couvertes par leur suite dédiée et actives dans l’application. Vérification navigateur sur le corpus réel : Elisabeth → Bernadette → Christophe, Grand-mère/Petit-fils selon le sens. Gestes et dimensions simulés ; retest des nouveaux contrôles sur iPhone/iPad réels après publication.
+
+Livraison `livraison-0.13.0/github/`, 24 fichiers publics, même empreinte de données, aucun changement Supabase. [Guide de publication et d’utilisation](livraison-0.13.0/LIRE-MOI.md). Documentation 0.14.0. Serveur local 8767 démarré pour les essais ; aucune publication par l’assistant.
+
+### 02/10/2026 — application 0.14.0 : graphique du lien de parenté
+
+Demande validée à partir des captures MyHeritage. Cartes avec portraits, noms et dates ; générations verticales, unions et fratries horizontales ; parents réellement communs ajoutés en contexte. Le chemin calculé reste celui du moteur de parenté, avec son détail intégral sous le graphique. Adoption et autres qualifications conservées. Les fratries sont indiquées sans affirmer une parenté complète lorsque l’export ne la garantit pas.
+
+Molette, boutons, pincement et déplacement du graphique ; état indépendant de l’arbre principal. Ouverture à 85 % près du départ, bouton Tout voir pour les longues branches. Version PWA et marqueur du service worker actualisés. 167 tests passent ; scénario navigateur aux cinq formats et pincement synthétique passent. 103 graphiques privés vérifiés sans superposition de cartes ; exemple Christophe–Édouard Manet de 23 personnes et 26 cartes. Les gestes réels iOS de ce nouveau graphique restent à essayer après publication.
+
+Livraison publique de 24 fichiers dans `livraison-0.14.0/github/`, instructions dans son LIRE-MOI. Aucun déploiement distant, aucune action Supabase, aucun changement du corpus actif ou du Carnet.
+
+### 02/10/2026 — application 0.14.1 : glissement PC du graphique corrigé
+
+Le glissement au clic gauche sélectionnait les noms et portraits (surlignage bleu du navigateur). Sélection native désactivée uniquement dans le graphique de parenté, glissement natif des images bloqué, action par défaut du pointerdown souris annulée en conservant le focus et le clic simple sur une carte. Le détail textuel reste copiable. Version PWA et marqueur du service worker actualisés.
+
+10 tests automatiques ciblés réussis. Le scénario navigateur vérifie la sélection native bloquée, les portraits non déplaçables, le clic simple sur carte conservé ainsi que les contrôles et formats précédents. Livraison complète publique : `livraison-0.14.1/github/`, 24 fichiers. Aucune action Supabase, aucun déploiement distant, aucune modification des données ni du Carnet.
+
+### 02/10/2026 — application 0.15.0 : synchronisation personnelle des Carnets
+
+Choix explicite de l’utilisateur : code personnel généré à conserver et à saisir sur les autres appareils, sans compte ni e-mail. Le PIN familial continue à protéger l’arbre et les échanges ; chaque code personnel désigne un Carnet distinct. Code généré avec 128 bits aléatoires, conservé dans IndexedDB et exportable séparément. Seule son empreinte liée à l’arbre est conservée côté serveur.
+
+Activation volontaire, reprise des notes/favoris locaux, liaison par code existant, refus du code inconnu sans changement de Carnet, changement de code explicite et pause par appareil. Synchronisation à l’ouverture, après enregistrement, au retour en ligne/visible et chaque minute au premier plan. Brouillons, restauration et note ouverte suspendent les échanges. Chaque champ est comparé à la dernière version commune ; notes concurrentes ou suppression concurrente à une édition restent visibles et nécessitent un choix. Résolutions locale/distante/réunion, contrôle des mutations locales pendant une requête, révision globale CAS côté serveur, nouvelles tentatives après conflit ou réponse perdue. Les suppressions ne ressuscitent pas une note distante inchangée.
+
+Table et RPC dédiées protégées par RLS et permissions service_role seulement ; passerelle vérifie session familiale signée et origine puis empreinte personnelle. POST sans cache, aucune clé Supabase publique ajoutée. Limites de taille et création. Arbre stable entre exports, anciens noms/dates reconnus avec les alias de réimport ; fiches absentes conservées. Schema IndexedDB et sauvegardes JSON inchangés ; paramètres/code personnel exclus des sauvegardes Carnet.
+
+188 tests réussis (140 JS, 48 Python), journal `analysis/tests-0.15.0.log`. PostgreSQL/PGlite teste isolation, permissions, codes distincts, révisions, données invalides, suppression et session expirée. Moteur testé contre fusion, conflits, réponse perdue, concurrence locale, CAS distant et réimport. `tests/notebook-sync-browser.html` passe avec vrai IndexedDB et API simulée : deux appareils fictifs, code généré, notes existantes, panne réseau, comparaison et réunion, convergence, pause, réouverture, suppression, liaison et code inconnu. Écran du Carnet sans débordement aux cinq formats (390×844, 844×390, 834×1194, 1194×834, 1440×900). Les notes réelles n’ont pas été envoyées.
+
+Livraison `livraison-0.15.0/` : 24 fichiers publics GitHub, migration `202610020004_personal_notebooks.sql`, fonction autonome `family-access.ts`. Guide [étape 7](docs/etape-7-synchronisation-carnets.md). Appliquer SQL, redéployer la fonction puis publier GitHub ; aucun changement de secrets/PIN/GEDCOM/photos. La copie locale reste autonome ; export/restauration sur l’adresse publiée pour la synchroniser. Déploiement et validation réelle PC/iPhone/iPad restent à effectuer par l’utilisateur. Aucun changement distant effectué par Codex.
+
+Complément de validation 0.15.0 : les suppressions de note et retraits de favoris gardent une trace atomique dans les paramètres locaux du Carnet. Une note reçue par le serveur sans confirmation ne réapparaît pas après suppression locale ; les champs locaux non supprimés restent conservés. Trois tests supplémentaires et un parcours réel IndexedDB couvrent ces interruptions.
+
+## 2 octobre 2026 — 0.15.1 : choisir et changer le code du Carnet
+
+**Carnet → Changer mon code** propose deux champs pour saisir et confirmer une phrase personnelle (12 à 128 caractères, sans espace au début/fin ni caractères de contrôle). Les anciens codes générés H1- restent valides. Le Carnet conserve ses notes, favoris et sa révision ; l’ancien code ne permet plus de lire, écrire ou recréer ce Carnet. Un code déjà utilisé ou précédemment révoqué est refusé sans remplacer de données. **Relier un autre Carnet** reste une action distincte.
+
+Le changement exige Internet et un accès familial valide. Son intention est enregistrée avant l’envoi : une réponse perdue se reprend avec les deux codes, sans recréer le Carnet. La pause reste conservée. Sur les autres appareils, utiliser **Relier un autre Carnet** puis saisir le nouveau code : les notes locales sont rapprochées et les différences restent explicites. Le PIN familial ne change pas.
+
+Migration incrémentale `202610020005_notebook_codes.sql` : registre privé des codes révoqués, rotation atomique, protection de l’ancienne fonction contre la recréation, limitation à 120 demandes par session familiale sur 15 minutes. Seules les empreintes sont enregistrées côté serveur, pas les codes. Migration 004 requise au préalable ; aucun nouveau secret. Fichiers prêts dans [livraison-0.15.1](livraison-0.15.1/LIRE-MOI.md).
+
+Validation : **195 tests** (147 JavaScript + 48 Python), journal `analysis/tests-0.15.1.log`. Tests PostgreSQL embarqué de rotation/révocation/collision/permissions/limitation, tests de confirmation perdue, conservation de la pause et des modifications hors connexion. Navigateur avec IndexedDB réel : confirmation incorrecte refusée, code choisi, notes conservées et retrouvées sur le second appareil. Formulaire sans débordement horizontal dans le Carnet aux tailles 390×844 et 834×1194. Déploiement distant et changement du vrai code laissés à l’utilisateur.
+
+## 2 octobre 2026 — 0.15.2 : PIN personnel de quatre chiffres
+
+L’utilisateur souhaite la même longueur que le PIN familial. **Carnet → Changer mon code** exige maintenant exactement quatre chiffres, avec clavier numérique iOS et confirmation. Les zéros initiaux sont conservés. Les codes longs des versions précédentes restent reconnus à la liaison et dans la synchronisation ; aucun Carnet n’est perdu après mise à jour. Notes, favoris, pause et reprise après interruption restent conservés. Après changement, relier chaque autre appareil avec le nouveau PIN.
+
+Un PIN de quatre chiffres est plus facile à deviner (10 000 combinaisons). L’accès familial reste requis. Une nouvelle limitation persistante bloque les requêtes du Carnet après cinq codes inconnus dans la même session familiale pendant quinze minutes ; les synchronisations réussies ne consomment pas ces cinq essais. Le plafond général de 120 demandes sur quinze minutes est conservé. Les demandes déjà en cours peuvent se terminer. Le PIN personnel sert au Carnet et doit rester privé ; choisir de préférence un autre PIN que le familial. Deux Carnets du même arbre ne peuvent pas partager le même code ; un code occupé ou révoqué est refusé.
+
+Livraison `livraison-0.15.2/` : 24 fichiers GitHub, migration incrémentale `202610020006_notebook_pin.sql` (004 et 005 doivent avoir été appliquées) et fonction Supabase autonome. Validation : **196 tests** (148 JavaScript + 48 Python), `analysis/tests-0.15.2.log` ; rotation vers un PIN commençant par zéro, notes et favoris conservés, ancien code refusé, second appareil et limitation persistante avec reprise après quinze minutes. Scénario navigateur fictif validé. Aucun déploiement ni modification du vrai code effectués.
+
+## 3 octobre 2026 — 0.16.0 : espace « À vérifier »
+
+Bouton **À vérifier** à côté de Parenté dans les outils de l’arbre. Affichage initial des dates, quatre catégories sélectionnables, recherche dans les noms et explications, filtre sur les ascendants/descendants de la personne sélectionnée à l’ouverture, pagination de 60 signalements. Chaque carte explique le contrôle et ouvre la fiche concernée ; plusieurs fiches sont proposées pour comparer un doublon possible. Les compteurs globaux portent sur tout l’export, indépendamment des filtres.
+
+Contrôles de dates : décès antérieur à la naissance, naissance/décès futurs, durée minimale de vie supérieure à 120 ans, mariage avant naissance/après décès, parent né après son enfant. Comparaison par intervalles, précision jour/mois/année et marge de deux ans pour ABT/EST/CAL ; dates non interprétables ignorées. Les filiations qualifiées non biologiques sont exclues du contrôle parent/enfant. Informations manquantes : date de naissance, lieu pour une naissance datée, date/lieu du décès seulement s’il est déclaré. Aucun décès n’est déduit de son absence.
+
+Doublons possibles : nom normalisé et date précise commune, ou année commune avec lieu ou parents concordants. Groupes de candidats, jamais de fusion ni de conclusion automatique ; les dates approximatives sont exclues de ce rapprochement. Sources : distinction entre citation propre à un événement et source générale de personne/famille ; signaler une absence de citation ne constitue pas une preuve d’erreur ni d’absence d’acte.
+
+Analyse de l’export actif : **29 192 signalements**, dont **101 dates**, **262 groupes de doublons possibles**, **10 815 informations manquantes** et **18 014 pistes sur les citations**. Environ une seconde pour le calcul Node sur ce PC (mesure ponctuelle). Une personne peut avoir plusieurs signalements. Données comparées avant/après : inchangées ; 29 192 identifiants de signalement distincts. Ce volume décrit l’incomplétude des informations/citations exportées, pas le nombre d’erreurs dans la généalogie.
+
+Validation : **205 tests** (157 JavaScript + 48 Python), `analysis/tests-0.16.0.log`. Neuf tests nouveaux couvrent dates partielles/incertaines, absence de décès, sources par événement/fiche/famille, doublons, adoption, branches et non-mutation. Parcours navigateur avec données fictives : quatre catégories, recherche vide, pagination, branches, navigation et cinq formats. [Guide](docs/etape-8-verifications.md). Livraison de 24 fichiers publics ; aucune nouvelle dépendance, aucun nouveau script Supabase, aucun changement du corpus, du Carnet ni des réglages de synchronisation. Publication et essai utilisateur restent à effectuer.
+
+## 3 octobre 2026 — 0.17.0 : chronologie individuelle
+
+La section Événements devient **Chronologie** dans la fiche latérale et dans Portrait. Les événements personnels, unions déclarées et naissances des enfants connus sont classés par date ; les faits sans date interprétable sont regroupés séparément. Jour/mois/année, qualificatifs et intervalles conservés. L’ordre est indicatif pour les dates approximatives ou qui se chevauchent ; aucun âge précis ni date de prise de vue n’est déduit.
+
+Union : noms et liens vers les autres parents/conjoints. Enfants : naissances et liens vers les fiches, qualification de filiation conservée quand disponible, portrait éventuellement ajouté avec mention explicite qu’il n’est pas daté par la naissance. Documents/photos directement rattachés à l’événement visibles et agrandissables ; citations spécifiques consultables sous l’événement. Les sources générales de personne/famille restent dans leur section distincte ; la galerie générale est conservée. Les doublons de présentation entre événements et résumés de naissance/mariage sont évités sans perdre leurs pièces ni notes.
+
+Validation : **211 tests** (163 JavaScript + 48 Python), `analysis/tests-0.17.0.log`. Six tests ajoutés : ordre, dates incertaines, dédoublonnage et preuve associée, unions multiples, filiation qualifiée, références absentes et non-mutation. Navigateur fictif : naissance, union, enfants, résidence, document, citation consultable, portrait contextualisé, navigation et cinq formats. Contrôle de toutes les **16 262 personnes** : **68 680 entrées chronologiques**, maximum **95** sur une fiche, références navigables présentes et corpus inchangé.
+
+Livraison de 24 fichiers publics, aucun nouveau module ni dépendance, aucun nouveau script Supabase. Les notes, favoris, PINs et réglages de synchronisation sont conservés. [Guide](docs/etape-9-chronologie.md). Publication et tests sur les appareils réels à effectuer par l’utilisateur.
+
+## 04/10/2026 — Carte des lieux familiaux, application 0.18.0
+
+Commande **Carte** dans les outils de l’arbre, référence fixée à la sélection lors de l’ouverture. Naissances, mariages, résidences, immigrations, émigrations et décès ; périmètres référence/ascendants/descendants/arbre complet, années, texte et type d’événement. Points regroupés par localité, événements datés et noms originaux accessibles, navigation vers les fiches. Zoom par molette/boutons/pincement et glissement ; filtres sans remise à zéro du cadrage. Rotation adaptée au rapport largeur/hauteur tout en conservant le centre de la scène.
+
+Normalisation des écritures sans changement du GEDCOM, identification par pays et contexte administratif, confirmation manuelle des variantes/homonymes, recherche dans le référentiel, exclusion et annulation des choix. Choix locaux associés à l’arbre et à l’écriture du lieu, indépendants des identifiants des personnes et du Carnet. Export et import avec validation complète avant confirmation ; aucun import invalide appliqué partiellement.
+
+Référentiel public compressé d’environ 4 Mo : 114 639 localités, communes françaises actuelles, localités belges et sélection mondiale GeoNames. Fond Natural Earth simplifié, sans routes/adresses. Aucune transmission de lieux à un géocodeur, aucune tuile distante. Module, styles et référentiel intégrés au cache de version 0.18.0 ; accès familial toujours requis et borné à sa durée habituelle.
+
+Analyse locale des événements retenus : 31 578 événements, 5 179 écritures de lieux ; 1 635 rapprochées automatiquement (8 128 événements localisés), 1 779 avec propositions à confirmer, 1 741 non trouvées et 24 trop imprécises. Les variantes historiques, codes postaux non vérifiables, contradictions de contexte et homonymes non résolus ne sont pas placés arbitrairement. Ces compteurs portent sur les événements cartographiques, pas sur tous les tags du GEDCOM.
+
+Les liaisons concernent uniquement les événements propres à la référence et ses mariages déclarés : la naissance d’un enfant n’invente pas une présence du parent dans cette ville. Les dates incertaines, ouvertes, identiques, absentes et les lieux non résolus interrompent les liaisons certaines. Les traits sont des liens entre observations, sans itinéraire ou date de voyage inventés.
+
+221 tests automatiques passent. Contrôles navigateur fictifs : filtrage, conservation du zoom, clic sur point, déplacement sans sélection accidentelle, confirmation d’un homonyme et conservation après réouverture. Aucun débordement horizontal dans les cinq formats PC/iPhone/iPad. Le fond de carte simplifié et les centres de communes ne donnent pas une précision d’adresse. Les gestes et le mode avion Safari matériel restent à essayer après publication.
+
+[Mode d’emploi](docs/etape-10-carte-familiale.md). [Livraison complète](livraison-0.18.0/LIRE-MOI.md) : 30 fichiers publics d’interface et un document complémentaire. Le guide familial complet existant est conservé, sans régénération dans ce lot. Aucun déploiement GitHub, aucune modification Supabase, aucune modification du GEDCOM ou des Carnets.
+
+## 04/10/2026 — Guide utilisateur actualisé pour 0.18.0
+
+Correction de l’omission du lot cartographique : le guide complet était resté en 0.17.0. Ses trois formats sont actualisés simultanément. Deux chapitres ajoutés en pages 16 et 17 ; numérotation des chapitres précédents conservée, sommaire étendu et accès Aide expliqué. PDF contrôlé visuellement sur toutes les pages ; débordement initial de la dernière page corrigé, version finale de 17 pages validée. Téléchargement local du PDF ajouté au HTML, icône Manuel Héritage conservée. Lot autonome livraison-guide-0.18.0/ et intégration dans livraison-0.18.0/github/docs/. Aucun changement du programme ou de Supabase ; aucune publication distante.
+
+
+### Livraison du 4 octobre 2026 — 0.18.1 : neuf générations
+
+- Deux sélecteurs de 1 à 9 ; profondeur par défaut inchangée à 3. Les valeurs 6 à 9 sont mémorisées comme les anciennes valeurs.
+- La profondeur et Fratrie conservent le zoom et la position de la carte survivante la plus proche. La recherche de cette carte utilise un index pour les grandes vues.
+- Avertissement non bloquant à partir de 500 cartes (les occurrences d’ancêtres répétés comptent). La vue ne coupe pas arbitrairement une branche à cause de ce seuil.
+- Voir tout permet de descendre jusqu’à 0,1 % ; les pourcentages sous 10 % affichent une décimale. Une vue globale de neuf générations peut être trop petite pour lire les noms : zoomer ou réduire la profondeur.
+- Export actuel : 953 cartes / 882 personnes distinctes au centre initial, Fratrie activée, profondeurs 9/9. Calcul de disposition mesuré à environ 21 ms sur ce PC, sans garantir les performances d’un appareil Apple réel ni d’un futur export plus dense.
+- 225 tests automatiques réussis : ancêtres jusqu’à 9, dixième génération descendante exclue, unions, cycles, répétitions, cadrage, préférences et grandes vues. Contrôles navigateur aux cinq formats ; pincement et redimensionnements simulés à 9 générations réussis.
+- Guide PDF/HTML/Markdown actualisé pour 0.18.1, 17 pages contrôlées visuellement. Livraison publique préparée sans données familiales ni Carnets ; aucun déploiement distant et aucun nouveau script Supabase.
+
+
+### Livraison du 4 octobre 2026 — 0.18.2 : ancêtres jusqu’à vingt générations
+
+- Limites séparées : ancêtres 1 à 20, descendants 1 à 9. Défauts à 3, profondeurs mémorisées ; zoom et cadrage conservés aux changements de filtres.
+- Vue centrée sur Christophe dans l’export actuel : ascendance connue jusqu’à 16 générations, 1 530 cartes / 1 270 personnes distinctes avec Fratrie, 707 cartes / 607 personnes sans Fratrie (descendants à 9). Le réglage à 20 n’ajoute pas de générations absentes du dossier. Calcul de disposition mesuré à environ 20 ms avec Fratrie sur ce PC.
+- 228 tests réussis : 180 JavaScript et 48 Python. Cas fictif jusqu’à 20, niveau 21 exclu, fratrie et conjoint au niveau 20, ancêtre partagé au niveau 20 et cycle interrompu avant la limite. Vérification des préférences 10 à 20, descendants toujours plafonnés à 9.
+- Browser : choix 20/9, Fratrie, mémorisation après réouverture, conservation de 100 % aux changements 20 → 15 → 20 dans les quatre formats Apple simulés, avertissement sans débordement et Voir tout. Pincement simulé à 20/9 réussi. Validation Safari réel à effectuer après publication.
+- Guide actualisé pour 0.18.2 et ses 17 pages vérifiées. La livraison reprend la configuration familiale publique de 0.18.1 ; aucun nouveau script Supabase, aucun déploiement distant et aucun changement aux données ou Carnets.
+
+
+### Préparation du 14 octobre 2026 — export MyHeritage 0.18.3
+
+- Original reçu : `20261014_7e0f9c_227077ars8c6479a9fc7uo_A.ged`, conservé intact. Ancien GEDCOM, arbre actif et manifeste photo inchangés ; copie avant import et ancienne archive privée vérifiées.
+- Préparation séparée : `imports/2026-10-14/candidate/`. Nouveau corpus 17 803 personnes, 4 780 familles, 1 201 sources ; 16 261 identités reprises, 1 542 ajouts, 71 fiches modifiées et une absence : Odile (@I506800@). Cette absence doit être confirmée avant publication ; sa réservation d’identité conserve la possibilité de retrouver ses notes et favoris.
+- 165 homonymes avec nouveaux UID uniques, dont tous les anciens homonymes restent présents, ont été conservés comme nouvelles personnes sans fusion. Cas réellement ambigus toujours bloquants. Deux tests supplémentaires couvrent ces distinctions et la présence d’un homonyme ancien absent.
+- 2 202 références photo, 2 155 ressources, 1 700 fichiers distincts dans le nouveau corpus. 1 377 ressources réutilisées et 778 téléchargées ; zéro échec. Delta effectif : 588 nouveaux fichiers (~72,1 Mio), 1 112 anciens fichiers toujours référencés. Les quatre anciens fichiers non référencés ne sont pas supprimés.
+- Validation des références familiales et des notes/favoris de test sur toutes les 16 262 anciennes identités, y compris l’absence et les corrections ; jamais d’accès aux vrais Carnets. 230 tests réussis (180 JavaScript + 50 Python). Contrôle navigateur réel interrompu par l’outil de contrôle car l’adresse de l’onglet n’était pas vérifiable ; test IndexedDB et aperçu fournis, non annoncés comme réussis.
+- Livraison : `livraison-import-2026-10-14/`, avec 38 fichiers publics dans `github/` et un delta privé Supabase séparé (tree.json + 588 images). Guide PDF/HTML/Markdown actualisé au 14 octobre, version 0.18.3 ; 17 pages contrôlées. Archive privée complète du nouveau corpus dans `imports/2026-10-14/candidate/artifacts/`.
+- Aucun push, téléversement, modification de secret, migration SQL ou changement de PIN effectué. Prochaine étape : relecture du bilan, confirmation de l’absence, sauvegarde des Carnets, envois privés et publication coordonnée. Une fois ce lot réellement mis en service, utiliser son arbre, son GEDCOM et son registre d’identités pour le prochain import.
+
+
+**Historique — correspondance initialement en attente, désormais confirmée ci-dessous :** l’ancienne Odile (@I506800@), mère de Marcel BALLOT, pourrait être la nouvelle « Odile Andree Suzanne BERTRAND » (@I520398@), désormais mère du même Marcel. UID différents : aucun rattachement des notes n’est appliqué sans confirmation humaine. Une décision pourra donner lieu à une nouvelle préparation depuis l’ancien export, en réutilisant les photos déjà vérifiées (`--media-cache imports/2026-10-14/candidate`) sans retéléchargement ni réutilisation de ses décisions d’identité. Ne pas publier la préparation avant cette relecture.
+
+
+### Confirmation d’Odile — préparation validée du 14 octobre 2026
+
+- L’utilisateur confirme que l’ancienne « Odile », mère de Marcel BALLOT, est bien « Odile Andree Suzanne BERTRAND ». Décision conservée dans `imports/2026-10-14/confirmation-identite.json` et correspondance dans `matches-valides.json`.
+- Seconde préparation depuis l’ancien export : `imports/2026-10-14/candidate-valide/`. L’ancien identifiant Héritage @I506800@ est conservé, le sourceId du nouveau GEDCOM reste @I520398@, et les anciennes identités sont inscrites pour la continuité des notes/favoris. Les relations sont réécrites avec l’identité conservée.
+- Bilan corrigé : 16 262 anciennes identités reprises (16 261 par UID unique, une confirmation humaine), 1 541 ajouts, 72 fiches modifiées, aucune absence. Total inchangé : 17 803 personnes, 4 780 familles, 1 201 sources.
+- 2 155 ressources photo réutilisées après contrôle, zéro téléchargement et zéro manquant lors de cette seconde préparation. Le delta Storage reste de 588 nouveaux fichiers. L’ancien corpus et toutes ses photos sont vérifiés inchangés.
+- Validation de notes/favoris simulés sur toutes les anciennes identités, dont Odile. Test ajouté pour un changement d’UID confirmé, la réécriture des liens et l’import suivant avec le nouvel UID. 231 tests réussis (180 JavaScript + 51 Python).
+- Livraison à utiliser : `livraison-import-2026-10-14-validee/`. La première livraison est conservée pour l’historique et marquée remplacée. Nouvelle archive privée complète dans `candidate-valide/artifacts/` ; guide 0.18.3 déjà vérifié et repris sans modification.
+- Aucun push, téléversement Supabase ou changement de secret effectué. Vérification visuelle et Carnets réels à contrôler par l’utilisateur, puis publication selon le LIRE-MOI. Pour le prochain export, après cette mise en service : référence `candidate-valide/app/data/tree.json`, `candidate-valide/sources/source.ged` et son registre.
+
+
+### Diagnostic après publication GitHub — 14 octobre 2026
+
+- Signalement utilisateur : écran « L’arbre n’a pas pu être ouvert » sur l’adresse publiée.
+- Contrôle HTTP public : 18 fichiers d’interface publiés correspondent exactement à la livraison validée, dont app.js, runtime-config.js, sw.js et les modules de lecture privée. Version publiée 0.18.3, nouvelle empreinte 67db9cd4052876713bccaa7dc4a9496f1440f9e6a4f7bdd1e7e241455fcc61d5. Rapport : `analysis/publication-diagnostic-2026-10-14.json`.
+- Fonction Supabase joignable : /tree sans session retourne le refus attendu HTTP 401. Aucun accès privé, PIN ou secret utilisé ; cela ne prouve pas que l’empreinte serveur et l’objet Storage sont corrects.
+- À isoler : programme ancien en cache, HERITAGE_SOURCE_SHA côté serveur ou emplacement du nouveau tree.json. Parcours de mise à jour sans effacement : https://christophedesmottes.github.io/heritage/update.html . Question en cours sur les étapes Supabase réalisées par l’utilisateur.
+- Aucun fichier distant modifié dans ce diagnostic, aucune donnée du navigateur effacée. Les instructions complètes figurent toujours dans la livraison validée.
+
+
+### Diagnostic de lecture privée — page autonome prête
+
+L’utilisateur confirme avoir envoyé le nouveau tree.json et modifié HERITAGE_SOURCE_SHA. La cause n’est donc pas attribuée à une étape oubliée sans preuve. Une ancienne version en cache reste possible ; le parcours update.html est proposé sans effacement des données.
+
+`app/diagnostic.html` et `livraison-depannage-2026-10-14/diagnostic.html` fournissent une page à publier seule à la racine de GitHub. Elle lit la configuration publique sans cache, réutilise uniquement la session familiale existante, interroge /tree et ne montre que le statut, les empreintes et les comptes. Elle ne modifie ni le Carnet, ni les sessions, ni le cache privé et n’affiche pas de PIN ou de jeton. Les index de parenté et de recherche sont vérifiés si le bon corpus est reçu.
+
+Trois tests ciblés couvrent mauvais export, échec serveur, session absente/refusée, arbre correct/invalide et absence d’informations privées dans le résultat. L’outil est inclus dans la liste publique du constructeur, mais volontairement hors du cache SHELL. La livraison validée contient maintenant 39 fichiers publics, dont cette page supplémentaire ; les données privées restent inchangées.
+
+Prochaine preuve nécessaire : résultat de https://christophedesmottes.github.io/heritage/diagnostic.html après publication du fichier et clic sur Vérifier l’ouverture dans le navigateur habituel. Aucun déploiement de ce fichier n’a été effectué par Codex. Ne pas déclarer l’incident résolu avant ce retour.
+
+Vérification après ajout du diagnostic : 234 tests réussis (183 JavaScript + 51 Python).
+
+
+### Retour du diagnostic privé — HTTP 503
+
+L’utilisateur transmet le résultat 2026-10-14.1 : expectedSourceSha et expectedStoragePath correspondent au nouvel export ; httpStatus 503, status server_read_failed. Ces deux valeurs sont celles attendues par le client, pas une confirmation de la valeur réellement chargée côté fonction. Le diagnostic contourne le cache privé : le serveur répond bien en erreur.
+
+Prochaine vérification préparée : `livraison-depannage-2026-10-14/diagnostic-storage.sql`, SELECT en lecture seule sur storage.objects du projet plexhqgdxdejijgxviie. Liste les chemins de tree.json, leur bucket, leur taille et indique si l’emplacement exact attendu existe. Aucun changement de politiques, bucket ou données ; aucun PIN demandé. Attendre le tableau pour distinguer emplacement incorrect et échec de lecture serveur avec objet présent.
+
+
+### Livraison du 16 novembre 2026 — 0.18.4 : non-indexation
+
+- Demande utilisateur : ne pas référencer le site désormais accessible sur genealogie.cdesmottes.fr. Les consignes Google confirment qu’un robots.txt bloquant empêcherait la lecture du noindex. Aucun robots.txt ajouté ; retrait d’un éventuel blocage ancien expliqué dans le LIRE-MOI.
+- Toutes les pages HTML de l’application, du guide et du dépannage portent noindex, nofollow, noimageindex. Le constructeur de l’interface impose ces balises aux sorties, y compris pour une future page. Page 404 dédiée incluse.
+- Un PDF servi directement ne peut pas être protégé par une balise HTML. Le guide PDF local est conservé sans modification ; son téléchargement public passe désormais par une page HTML noindex qui remet les mêmes octets au navigateur lors du clic. Les sources PDF/Markdown ne sont plus copiées dans la livraison publique. Les anciennes copies déjà présentes sur GitHub restent à retirer manuellement selon la liste fournie.
+- Les sources du guide et ses outils de génération sont actualisés afin que les prochains guides et imports conservent cette politique. Les anciennes livraisons historiques ne doivent pas être republiées.
+- Cache applicatif porté à 0.18.4 ; les espaces de cache des données et photos ne changent pas. La configuration familiale utilise le même treeId et la même empreinte du nouvel export d’octobre. Le CNAME reste géré par l’utilisateur ; aucun changement DNS, Supabase, PIN ou Carnet.
+- Quatre contrôles supplémentaires : balises en tête et suppression des directives contradictoires, publication HTML sans documents bruts, guide publié sans URL PDF directe, téléchargement du PDF via Blob identique à l’original. 238 tests réussis (187 JavaScript + 51 Python).
+- Livraison : `livraison-0.18.4/github/`, 37 fichiers publics. Guide HTML et page de téléchargement inclus ; aucun fichier PDF/Markdown, GEDCOM, arbre privé ou photo familiale. `verification.json` conserve l’empreinte du PDF inchangé et le résultat des contrôles.
+- Publication non effectuée par Codex. Les anciens résultats pourront persister jusqu’à une nouvelle exploration ; Google Search Console permet une demande de retrait temporaire si nécessaire. Ces consignes concernent le site ; elles ne rendent pas privé le dépôt GitHub et ne remplacent pas le contrôle d’accès familial.
+- Dernier export réellement mis en service confirmé par l’utilisateur : préparation validée du 14 octobre, `imports/2026-10-14/candidate-valide/` (17 803 personnes). Le corpus local historique dans app/data reste inchangé.
+
+Références officielles : https://developers.google.com/search/docs/crawling-indexing/block-indexing ; https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
